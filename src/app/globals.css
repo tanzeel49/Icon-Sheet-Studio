@@ -1,0 +1,4077 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.984 0 0);
+  --foreground: oklch(0.175 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.175 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.175 0 0);
+  --primary: oklch(0.21 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.962 0 0);
+  --secondary-foreground: oklch(0.21 0 0);
+  --muted: oklch(0.958 0 0);
+  --muted-foreground: oklch(0.524 0 0);
+  --accent: oklch(0.95 0 0);
+  --accent-foreground: oklch(0.21 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.908 0 0);
+  --input: oklch(0.895 0 0);
+  --ring: oklch(0.628 0 0);
+  /* Task 24 layered surfaces: side panels keep --background (near-white),
+     the center workspace drops one step to --canvas so cards (pure white)
+     read as elevated paper on a distinct work surface. */
+  --canvas: oklch(0.966 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0 0);
+  --sidebar-foreground: oklch(0.175 0 0);
+  --sidebar-primary: oklch(0.21 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.95 0 0);
+  --sidebar-accent-foreground: oklch(0.21 0 0);
+  --sidebar-border: oklch(0.908 0 0);
+  --sidebar-ring: oklch(0.628 0 0);
+}
+
+.dark {
+  --background: oklch(0.185 0 0);
+  --foreground: oklch(0.932 0 0);
+  --card: oklch(0.213 0 0);
+  --card-foreground: oklch(0.932 0 0);
+  --popover: oklch(0.220 0 0);
+  --popover-foreground: oklch(0.932 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.213 0 0);
+  --secondary: oklch(0.242 0 0);
+  --secondary-foreground: oklch(0.932 0 0);
+  --muted: oklch(0.242 0 0);
+  --muted-foreground: oklch(0.690 0 0);
+  --accent: oklch(0.242 0 0);
+  --accent-foreground: oklch(0.932 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 13%);
+  --ring: oklch(0.552 0 0);
+  /* deep workspace: canvas darkest, panels mid, cards lightest — clear
+     three-layer depth without extra borders */
+  --canvas: oklch(0.152 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.185 0 0);
+  --sidebar-foreground: oklch(0.932 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.242 0 0);
+  --sidebar-accent-foreground: oklch(0.932 0 0);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: oklch(0.552 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Icon Sheet Studio utilities                                         */
+/* ------------------------------------------------------------------ */
+
+/* ---- Task 24 · professional polish pass 2 -------------------------- */
+
+/* center workspace surface — one step below the side panels; cards sit
+   on top as elevated paper. Applied to the <main> column. */
+.studio-canvas {
+  background: var(--canvas);
+}
+
+/* pro-tool section caption — the uppercase tracked micro label used by
+   side panels, toolbars and dialog sections (Figma/Linear convention). */
+.pro-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
+}
+
+/* quiet helper text under controls — one consistent treatment instead
+   of ad-hoc muted 10px paragraphs scattered across panels. Dark mode
+   lifts the mix a step: small text on dark surfaces needs the extra
+   legibility without going full muted-foreground. */
+.pro-help {
+  font-size: 11px;
+  line-height: 1.45;
+  color: color-mix(in oklab, var(--muted-foreground) 78%, var(--foreground));
+}
+.dark .pro-help {
+  color: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
+}
+
+/* slim custom scrollbars for pro-tool panels */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+  border-radius: 999px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--muted-foreground) 60%, transparent);
+}
+
+/* studio dropzone entrance */
+@keyframes studio-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.studio-rise {
+  animation: studio-rise 0.28s ease-out both;
+}
+
+/* dotted workspace surface around the sheet artwork (pro-tool feel) —
+   layered over the --canvas token so the edit workspace, the overview
+   surface and the panels stay in one depth system */
+.workspace-canvas {
+  background-color: color-mix(in oklab, var(--muted) 30%, var(--canvas));
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--muted-foreground) 22%, transparent) 1px,
+    transparent 1.1px
+  );
+  background-size: 24px 24px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive large-screen container caps (unlayered = wins over the   */
+/* @layer utilities, so they deterministically override the @7xl caps  */
+/* no matter how Tailwind sorts arbitrary vs named variants). They     */
+/* respond to the CENTER pane width (main is an inline-size @container) */
+/* — extra screen real estate goes to the artwork / card grid, not to  */
+/* dead side margins.                                                  */
+/* ------------------------------------------------------------------ */
+
+/* multi-sheet edit column: ≥1280px center → 1320 (via @7xl utility),
+ * ≥1700px center → 1560 (this rule wins at 2560-class viewports) */
+@container (min-width: 1700px) {
+  .sheet-column-wide {
+    max-width: 1560px;
+  }
+}
+
+/* overview content: ≥1700px center → 1760 (more card columns on
+ * 2560-class viewports instead of a 1500px column floating in margins) */
+@container (min-width: 1700px) {
+  .overview-content-wide {
+    max-width: 1760px;
+  }
+}
+
+/* transparency checkerboard behind sheet artwork (edit preview + overview
+   thumbnails). Standard design-tool convention (Figma / Illustrator):
+   fully hidden under opaque sheets; where the artwork is transparent —
+   Background toggle off, or an imported template without a background
+   element — the checkerboard shows through, keeping the artwork readable
+   in BOTH light and dark themes and making it obvious the sheet itself
+   exports transparent. Never affects the exported SVG. */
+.transparency-grid {
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%),
+    linear-gradient(45deg, #e8e8e8 25%, transparent 25%, transparent 75%, #e8e8e8 75%);
+  background-size: 14px 14px;
+  background-position: 0 0, 7px 7px;
+}
+
+/* stacked-paper depth beneath the sheet artwork — one clean stack layer
+   plus a soft ambient shadow; quiet enough to read as paper, not as fx */
+.sheet-stack {
+  box-shadow:
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 18px 40px -18px rgb(0 0 0 / 0.22);
+}
+
+/* keyboard hint chip — tiny raised keycap: hairline border, a 1-stop
+   vertical micro-gradient (keeps it a "key", not a flat box) and a faint
+   base shadow. Same AA-safe text mix as before. */
+.kbd-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  padding: 0 0.3rem;
+  height: 1.25rem;
+  border-radius: 0.375rem;
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--background) 42%, var(--muted)),
+    var(--muted)
+  );
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.05);
+  color: color-mix(in oklab, var(--muted-foreground) 70%, var(--foreground));
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+}
+.dark .kbd-chip {
+  border-color: color-mix(in oklab, var(--border) 80%, transparent);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.3);
+}
+
+/* library tag chip (filter row + tag editor)
+   text mixes 30% foreground into muted-foreground → ≥4.5:1 contrast
+   for the 10.5px label text (axe-core serious fix, round 6) */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.375rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--muted);
+  color: color-mix(in oklab, var(--muted-foreground) 70%, var(--foreground));
+  font-size: 10.5px;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 120ms, border-color 120ms, background-color 120ms;
+}
+.tag-chip:hover {
+  color: var(--foreground);
+  border-color: color-mix(in oklab, var(--muted-foreground) 45%, var(--border));
+}
+.tag-chip[data-active="true"] {
+  background: color-mix(in oklab, #d97706 8%, transparent);
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  color: color-mix(in oklab, #b45309 88%, var(--foreground));
+}
+.dark .tag-chip[data-active="true"] {
+  color: #fbbf24;
+}
+/* faceted count == 0 under the current filter: the tag would refine the
+   result to NOTHING — dim it (still clickable; the tooltip explains) */
+.tag-chip[data-zero="true"] {
+  opacity: 0.55;
+  border-style: dashed;
+}
+.tag-chip[data-zero="true"]:hover {
+  opacity: 0.85;
+}
+
+/* drag overlay pickup — floating tile stack */
+.drag-pickup {
+  animation: drag-pop 140ms ease-out both;
+}
+@keyframes drag-pop {
+  from {
+    opacity: 0.4;
+    transform: scale(0.9) rotate(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(-1.5deg);
+  }
+}
+
+/* drop-target ring while an icon drag hovers a sheet card — a calm,
+   functional affordance (amber = the app's single selection accent) */
+.drop-pulse {
+  animation: drop-pulse 1.4s ease-in-out infinite;
+}
+@keyframes drop-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, #d97706 28%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, #d97706 0%, transparent);
+  }
+}
+
+/* (card hover sheen removed — clean surfaces, no decorative sweeps) */
+
+/* icon-inspector artwork surface — fine design-tool dot grid with a
+   soft radial vignette so the inspected glyph reads crisply at 112px */
+.inspector-surface {
+  background-color: color-mix(in oklab, var(--muted) 34%, var(--canvas));
+  background-image:
+    radial-gradient(
+      circle at 50% 42%,
+      color-mix(in oklab, var(--canvas) 92%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      color-mix(in oklab, var(--muted-foreground) 26%, transparent) 0.8px,
+      transparent 1px
+    );
+  background-size:
+    100% 100%,
+    14px 14px;
+  background-position:
+    0 0,
+    -3px -3px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Overview workspace stats strip (round 6)                            */
+/* ------------------------------------------------------------------ */
+
+.stat-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  background: var(--card);
+  overflow-x: auto;
+  scrollbar-width: none;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}
+.dark .stat-strip {
+  border-color: color-mix(in oklab, var(--border) 90%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
+.stat-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.stat-cell {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  white-space: nowrap;
+  transition: background-color 120ms;
+}
+.stat-cell:hover {
+  background: color-mix(in oklab, var(--muted) 65%, transparent);
+}
+
+.stat-icon {
+  height: 0.8rem;
+  width: 0.8rem;
+  align-self: center;
+  color: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.015em;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: color-mix(in oklab, var(--muted-foreground) 72%, var(--foreground));
+  line-height: 1;
+}
+
+.stat-sub {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--muted-foreground) 65%, var(--foreground));
+  line-height: 1;
+  align-self: center;
+  padding-left: 0.15rem;
+}
+
+.stat-sep {
+  width: 1px;
+  margin: 0.25rem 0;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* amber emphasis while unassigned icons are waiting to be filed — the one
+   intentional accent use in the strip (functional: needs attention) */
+.stat-cell-accent {
+  background: color-mix(in oklab, #d97706 7%, transparent);
+}
+.stat-cell-accent .stat-value {
+  color: color-mix(in oklab, #b45309 92%, var(--foreground));
+}
+.dark .stat-cell-accent .stat-value {
+  color: #fbbf24;
+}
+
+/* ------------------------------------------------------------------ */
+/* Small custom controls focus parity (round 6)                        */
+/* ------------------------------------------------------------------ */
+
+.tag-chip:focus-visible,
+.bulk-check:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* muted but contrast-compliant hint text (axe color-contrast fix):
+   ~28% foreground mixed in lifts muted-foreground past 4.5:1 while
+   keeping the visually-quiet hierarchy of small helper copy */
+.hint-text {
+  color: color-mix(in oklab, var(--muted-foreground) 72%, var(--foreground));
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Command palette (round 7)                                           */
+/* ------------------------------------------------------------------ */
+
+/* active-row accent rail — mirrors the sheet-nav fill-rail language */
+.palette-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 2px;
+  border-radius: 2px;
+  background: #d97706;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+.palette-row[aria-selected="true"]::before {
+  opacity: 1;
+}
+/* keyboard users still get a ring on top of the active state */
+.palette-row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+/* palette entrance: a touch more personality than the default dialog fade */
+[data-slot="dialog-content"] .palette-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 40px;
+}
+
+/* overview card hover lift — handled natively by framer-motion
+   whileHover (motion sets inline transforms that would block CSS) */
+
+/* header palette trigger — quiet until hovered */
+.palette-trigger {
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Icon inspector (round 8)                                            */
+/* ------------------------------------------------------------------ */
+
+/* viewport-safe modal shell — the dialog may NEVER exceed the visible
+   viewport: it is capped at 100vh − 2rem vertical margins (dvh where
+   supported so mobile dynamic toolbars can't clip the footer), and the
+   header / footer stay pinned while ONLY the details column scrolls
+   internally (flex chain with min-h-0 down the middle). */
+.inspector-shell {
+  max-height: calc(100vh - 2rem);
+}
+@supports (height: 100dvh) {
+  .inspector-shell {
+    max-height: calc(100dvh - 2rem);
+  }
+}
+
+/* body swap animation — replays on every stepper/related-jump remount
+   (key={iconId}); pairs with the dialog's own open animation */
+.inspector-body {
+  animation: inspector-swap 180ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+@keyframes inspector-swap {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inspector-body {
+    animation: none;
+  }
+}
+
+/* related-icons tile strip — shared-tag siblings */
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.375rem;
+}
+@media (min-width: 640px) {
+  .related-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.related-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  background: color-mix(in oklab, var(--muted) 28%, transparent);
+  padding: 0.375rem 0.5rem;
+  transition:
+    border-color 130ms ease,
+    background-color 130ms ease;
+  outline: none;
+  cursor: pointer;
+  min-height: 44px; /* touch target */
+}
+.related-tile:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 40%, var(--border));
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+}
+.related-tile:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Command palette scope chip (round 8 "#2 query"; round 9 adds #tag
+ * and #unassigned scopes + tag suggestions on miss)                    */
+/* ------------------------------------------------------------------ */
+
+.palette-scope {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0.5rem 0;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in oklab, #d97706 22%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+  padding: 0.3rem 0.6rem;
+}
+.palette-scope-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, #b45309 90%, var(--foreground));
+}
+.dark .palette-scope-label {
+  color: #fbbf24;
+}
+.palette-scope-clear {
+  margin-left: auto;
+  font-size: 10px;
+  color: color-mix(in oklab, var(--muted-foreground) 72%, var(--foreground));
+  border-radius: 0.375rem;
+  padding: 0.125rem 0.4rem;
+  transition: background-color 120ms ease, color 120ms ease;
+  cursor: pointer;
+  outline: none;
+}
+.palette-scope-clear:hover {
+  background: color-mix(in oklab, var(--muted) 70%, transparent);
+  color: var(--foreground);
+}
+.palette-scope-clear:focus-visible {
+  outline: 2px solid color-mix(in oklab, #d97706 70%, var(--ring));
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Interactive stat cells (round 9) — overview stats strip became a
+ * jump board: every cell is a <button> with the same visual language
+ * plus a clear affordance on hover/focus.                               */
+/* ------------------------------------------------------------------ */
+
+button.stat-cell {
+  font: inherit;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+button.stat-cell-action {
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    box-shadow 120ms ease,
+    transform 120ms ease;
+}
+button.stat-cell-action:hover {
+  background: color-mix(in oklab, var(--muted) 72%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #d97706 22%, var(--border));
+}
+button.stat-cell-action:active {
+  transform: translateY(1px);
+}
+button.stat-cell-action:focus-visible {
+  outline: 2px solid color-mix(in oklab, #d97706 70%, var(--ring));
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Library health report (round 9) — issue rows in the report dialog   */
+/* ------------------------------------------------------------------ */
+
+.health-issue {
+  border-radius: 0.625rem;
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  padding: 0.5rem 0.625rem;
+  transition:
+    border-color 130ms ease,
+    background-color 130ms ease;
+}
+.health-issue-warning {
+  border-color: color-mix(in oklab, #d97706 30%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+}
+.health-issue-info:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 35%, var(--border));
+}
+.health-issue-warning:hover {
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  background: color-mix(in oklab, #d97706 8%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Workspace backup dialog (round 3) — section cards                   */
+/* ------------------------------------------------------------------ */
+
+/* Soft card surface for the download/restore sections — sits between
+   muted and card with a hairline border and a gentle hover lift so the
+   two halves of the dialog read as parallel, interactive units. */
+.backup-card {
+  border-radius: 0.625rem;
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--muted) 18%, var(--card));
+  padding: 0.75rem 0.875rem;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+.backup-card:hover {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.10);
+}
+.backup-card:focus-within {
+  border-color: color-mix(in oklab, var(--muted-foreground) 40%, var(--border));
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.10);
+}
+
+/* ------------------------------------------------------------------ */
+/* Studio footer + brand polish (round 2)                              */
+/* ------------------------------------------------------------------ */
+
+/* Header brand logo — the app's amber mark: a single vertical micro-gradient
+   (light→deep amber), a soft inner top highlight, a pressed bottom edge, a
+   hairline outer ring and a 1px drop so the tile sits ON the header. Still a
+   quiet 28px glyph — no glow, no lift. */
+.studio-brand-logo {
+  color: #ffffff;
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    inset 0 -1px 0 rgb(0 0 0 / 0.12),
+    0 1px 2px rgb(0 0 0 / 0.16),
+    0 0 0 1px rgb(0 0 0 / 0.06);
+}
+.dark .studio-brand-logo {
+  color: #451a03; /* amber-950 — keeps AA contrast on the brighter tile */
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 1px 3px rgb(0 0 0 / 0.45),
+    0 0 0 1px rgb(0 0 0 / 0.3);
+}
+
+/* Footer — slightly tinted quiet surface with a refined top hairline and a
+   1px inner light edge, so the status strip reads as a finished chrome bar.
+   (Markup lives in studio-app.tsx — all polish is CSS-only via this class.) */
+.studio-footer {
+  position: relative;
+  background: color-mix(in oklab, var(--muted) 16%, var(--background));
+  border-top: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55);
+}
+.dark .studio-footer {
+  background: color-mix(in oklab, var(--muted) 20%, var(--background));
+  border-top-color: color-mix(in oklab, var(--border) 90%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.045);
+}
+
+/* footer left-side brand mark — the 5px dot grew into an 11px shield glyph
+   (masked SVG, colored via background-color so it follows theme tokens):
+   the quiet "local-first, nothing leaves your browser" signal. */
+.footer-brand-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 0;
+  background-color: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.55 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.55 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+/* footer center: active-sheet status dot. In overview it's muted gray; in
+   edit mode it turns amber — a static, calm "you are editing" signal. */
+.footer-active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted-foreground) 60%, var(--foreground));
+  transition: background 160ms ease;
+}
+.footer-active-dot--edit {
+  background: #d97706;
+}
+.dark .footer-active-dot--edit {
+  background: #f59e0b;
+}
+
+/* footer center: multi-sheet selection badge — one small stacked-squares
+   glyph in amber, signalling a transient batch state at a glance */
+.footer-selection-badge {
+  width: 11px;
+  height: 11px;
+  position: relative;
+}
+.footer-selection-badge::before,
+.footer-selection-badge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  border: 1px solid #d97706;
+  background: color-mix(in oklab, #d97706 14%, transparent);
+}
+.footer-selection-badge::after {
+  transform: translate(2.5px, 2.5px);
+}
+.dark .footer-selection-badge::before,
+.dark .footer-selection-badge::after {
+  border-color: #f59e0b;
+}
+
+/* footer version chip — quiet, monospace, slightly recessed so it reads as
+   metadata rather than a primary label */
+.footer-version {
+  color: color-mix(in oklab, var(--muted-foreground) 55%, var(--foreground));
+  letter-spacing: 0.04em;
+}
+
+/* interactive kbd chips in the footer — quiet hover: text lifts to
+   foreground, border stays neutral, keycap rises 1px with a touch more
+   shadow (it is the only "pressable" cue in the status strip) */
+.studio-footer .kbd-chip {
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+.studio-footer button:hover .kbd-chip,
+.studio-footer button:focus-visible .kbd-chip {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--muted-foreground) 45%, var(--border));
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.08);
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .footer-active-dot--edit { animation: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Empty-state landing (restyled) — clean and calm: no halo animation,
+   no entrance staggers. The dropzone is the hero; the copy leads.        */
+/* ------------------------------------------------------------------ */
+
+/* soft static tint behind the empty-state logo — barely-there warmth,
+   hidden from screen readers via aria-hidden on the parent */
+.empty-state-halo {
+  background:
+    radial-gradient(circle at 50% 50%,
+      color-mix(in oklab, #d97706 14%, transparent) 0%,
+      transparent 68%);
+  transform: scale(1.45);
+}
+
+/* feature chips under the dropzone — descriptive, quiet, keyboard-focusable */
+.empty-state-feature-card {
+  cursor: default;
+}
+.empty-state-feature-card:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 35%, var(--border));
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+.empty-state-feature-card:focus-visible {
+  border-color: color-mix(in oklab, var(--muted-foreground) 45%, var(--border));
+}
+.empty-state-feature-icon {
+  display: inline-grid;
+  place-items: center;
+  color: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 4 — interactive footer context + sheet-nav accent polish       */
+/* ------------------------------------------------------------------ */
+
+/* the footer center context strip is a real button — quiet neutral hover
+   so users discover it is clickable without making the status feel loud */
+.footer-context-button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0 6px;
+  height: 20px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.footer-context-button:hover {
+  background: color-mix(in oklab, var(--muted) 72%, transparent);
+  border-color: var(--border);
+}
+.footer-context-button:focus-visible {
+  border-color: var(--border);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 45%, transparent);
+}
+.footer-context-button:hover .footer-active-dot {
+  transform: scale(1.25);
+}
+
+/* when the user clicks the footer active-sheet context, the matching sidebar
+   row briefly flashes an amber ring so they can spot it in the list.
+   one-shot animation, removed by the JS after 900ms. */
+.footer-context-flash {
+  animation: footer-context-flash 0.9s ease-out;
+}
+@keyframes footer-context-flash {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, #d97706 45%, transparent);
+  }
+  25% {
+    box-shadow: 0 0 0 4px color-mix(in oklab, #d97706 30%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, #d97706 0%, transparent);
+  }
+}
+
+/* sheet-nav active row — a solid 2px amber rail: the single, unmistakable
+   "selected" signal. Flat color, no gradient, no glow. */
+.sheet-row-active-rail {
+  background: #d97706;
+}
+.dark .sheet-row-active-rail {
+  background: #f59e0b;
+}
+
+/* no-op hook kept for future grouping use */
+.group:has(> .footer-context-flash) {
+}
+
+/* reduced motion: disable the one-shot flash + dot scale */
+@media (prefers-reduced-motion: reduce) {
+  .footer-context-flash { animation: none; }
+  .footer-context-button:hover .footer-active-dot { transform: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 5 — overview toolbar polish + sheet-nav row hover sheen       */
+/* ------------------------------------------------------------------ */
+
+/* overview toolbar — a subtle bottom hairline when a selection is active,
+   so the batch-action cluster reads as a distinct, focused state */
+.overview-toolbar {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 160ms ease;
+}
+.overview-toolbar:has(.overview-selection-badge) {
+  border-bottom-color: var(--border);
+}
+
+/* grouped button cluster — Select all / Clear sit together in a pill-shaped
+   container so they read as one "selection scope" control rather than two
+   loose buttons. Hover on the group lifts the divider between them. */
+.overview-toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--muted);
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+.overview-toolbar-group:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 35%, var(--border));
+}
+.overview-toolbar-group > * {
+  border-radius: 0;
+  height: 28px;
+}
+.overview-toolbar-group > * + * {
+  border-left: 1px solid var(--border);
+  transition: border-color 140ms ease;
+}
+
+/* selection badge — amber-tinted so the count reads as an active state
+   (functional accent, kept) */
+.overview-selection-badge {
+  background: color-mix(in oklab, var(--muted) 60%, #d97706 10%);
+  border-color: color-mix(in oklab, var(--border) 50%, #d97706 35%);
+  color: color-mix(in oklab, var(--foreground) 80%, #b45309 20%);
+}
+.dark .overview-selection-badge {
+  background: color-mix(in oklab, var(--muted) 50%, #f59e0b 14%);
+  border-color: color-mix(in oklab, var(--border) 45%, #f59e0b 40%);
+  color: #fbbf24;
+}
+
+/* "Apply design to selected" — the primary batch action: a clean outline
+   button whose border + text strengthen on hover. No gradient, no glow. */
+.overview-apply-button {
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+}
+.overview-apply-button:not(:disabled):hover {
+  border-color: color-mix(in oklab, var(--foreground) 35%, var(--border));
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+.overview-apply-button:not(:disabled):focus-visible {
+  border-color: color-mix(in oklab, var(--foreground) 45%, var(--border));
+}
+
+/* (sheet-nav row hover sheen removed — rows stay quiet; the amber rail
+   alone communicates selection) */
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sheet-nav-row:hover::after { content: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 6 — properties panel Section header polish                    */
+/* ------------------------------------------------------------------ */
+
+/* collapsible section headers in the right properties panel — a subtle
+   neutral rail appears when open; hover is a plain muted tint. */
+.studio-section {
+  position: relative;
+}
+.studio-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--muted-foreground) 45%, transparent);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+.studio-section[open]::before {
+  opacity: 0.5;
+}
+
+.studio-section-summary {
+  border-radius: 4px;
+  padding-left: 0.5rem !important;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.studio-section[open] > .studio-section-summary {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+.studio-section-summary:hover {
+  background: color-mix(in oklab, var(--muted) 62%, transparent);
+}
+
+/* chevron — smooth rotation, neutral color */
+.studio-section-chevron {
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), color 140ms ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 7 — overview edit button accent + stat-strip hover polish     */
+/* ------------------------------------------------------------------ */
+
+/* the "Edit sheet" button in the overview card quick-actions overlay —
+   the primary "open" action in the cluster. Clean outline treatment:
+   neutral resting, strengthens to foreground on hover. The element's
+   className intentionally omits `border-border`/`text-muted-foreground`
+   utilities so these custom rules apply cleanly without !important. */
+.overview-edit-button {
+  border-color: var(--border);
+  color: var(--muted-foreground);
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.overview-edit-button:hover {
+  border-color: color-mix(in oklab, var(--foreground) 35%, var(--border));
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+
+/* stat-strip — interactive cells get a neutral muted hover; the amber
+   "unassigned" accent cell keeps its stronger tint (functional). */
+button.stat-cell-action:hover {
+  background: color-mix(in oklab, var(--muted) 68%, transparent);
+}
+button.stat-cell-action:active {
+  background: color-mix(in oklab, var(--muted) 88%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 8 — upload dropzone animation + feature-card stagger entrance */
+/* ------------------------------------------------------------------ */
+
+/* upload dropzone — clean professional resting state: solid hairline
+   border (the component sets it); no marching ants, no animated dashes.
+   The active-drag state is amber + dashed (set by the component) so the
+   drop affordance appears exactly when it is meaningful. */
+.upload-dropzone--active {
+  /* styling handled by component classes (dragging state) */
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 9 — EmptyState CTA pulse + overview card overflow guard        */
+/* ------------------------------------------------------------------ */
+
+/* the "Load 64 sample icons" button on the empty state — a quiet secondary
+   action: no pulse, no sparkle. Hover lifts it to foreground with a muted
+   background, consistent with every other ghost control in the app. */
+.empty-state-cta {
+  position: relative;
+  border: 1px solid transparent;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.empty-state-cta:hover {
+  background: color-mix(in oklab, var(--muted) 72%, transparent);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+.empty-state-cta:focus-visible {
+  background: color-mix(in oklab, var(--muted) 62%, transparent);
+  border-color: var(--border);
+  outline: none;
+}
+
+/* overview card quick-actions overflow guard — when the card is narrow
+   (auto-fill grid can produce ~220px cards), the 4-button overlay can
+   crowd. Rather than a JS "..." menu (heavy), we use CSS to scale the
+   buttons down slightly and tighten the gap at narrow widths. This keeps
+   all 4 actions visible + clickable without overflow. The buttons
+   remain 24px touch-target at normal widths. */
+@media (max-width: 640px) {
+  .card-sheen .absolute.bottom-2.right-2 {
+    gap: 0.25rem !important;
+  }
+  .card-sheen .absolute.bottom-2.right-2 > button {
+    height: 22px;
+    width: 22px;
+  }
+  .card-sheen .absolute.bottom-2.right-2 > button > svg {
+    height: 11px;
+    width: 11px;
+  }
+}
+
+/* reduced motion (consolidated) */
+@media (prefers-reduced-motion: reduce) {
+  .empty-state-cta { animation: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 19 — UI/UX polish pass (visual only, zero logic changes)      */
+/*                                                                     */
+/* A refined control language for the properties panel: pro-tool       */
+/* sliders, a custom select chevron, a checkerboard color swatch and   */
+/* a smoother section reveal. All rules are additive and scoped to     */
+/* dedicated classes — existing surfaces keep their current look.      */
+/* ------------------------------------------------------------------ */
+
+/* ---- 19a · Illustrator-style slider --------------------------------- */
+/* The shadcn slider inside .studio-slider gets: a slightly taller hit */
+/* zone, a hairline-bordered track with an inner shadow (inset depth), */
+/* and a thumb that grows on hover/focus with a crisp focus ring.      */
+.studio-slider {
+  /* P5 overlap fix — same downward-only hit-zone rule as .ip-slider: the
+     extension may never reach up into the value input beside/above it. */
+  padding-block-end: 0.375rem; /* taller pointer hit zone without visual change */
+  margin-block-end: -0.375rem; /* …while occupying the same layout box */
+}
+.studio-slider [data-slot="slider-track"] {
+  height: 5px;
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.06);
+}
+.studio-slider [data-slot="slider-range"] {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--primary) 88%, #ffffff 12%),
+    var(--primary)
+  );
+}
+.studio-slider [data-slot="slider-thumb"] {
+  border-width: 1.5px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    border-color 120ms ease;
+}
+.studio-slider:hover [data-slot="slider-thumb"] {
+  transform: scale(1.1);
+}
+.studio-slider [data-slot="slider-thumb"]:focus-visible {
+  transform: scale(1.15);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.14),
+    0 0 0 4px color-mix(in oklab, var(--ring) 35%, transparent);
+}
+.studio-slider[data-disabled] {
+  opacity: 0.55;
+}
+/* dark mode: lift the track off the panel background so the full value
+ * range stays visible on dark themes (muted alone is too close to bg) */
+.dark .studio-slider [data-slot="slider-track"] {
+  background: color-mix(in oklab, var(--muted-foreground) 26%, transparent);
+  border-color: color-mix(in oklab, var(--muted-foreground) 18%, transparent);
+}
+
+/* ---- 19b · native select with a custom chevron ---------------------- */
+/* appearance-none + an inline SVG chevron pinned right: consistent      */
+/* cross-platform arrow that matches the icon set's stroke weight.      */
+.studio-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.6rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23989898' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.45rem center;
+  background-size: 0.75rem 0.75rem;
+}
+.studio-select:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23717171' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* ---- 19c · color swatch with transparency checkerboard -------------- */
+/* The ColorField swatch shows the classic design-tool checkerboard     */
+/* under transparent/empty values, so "no color" reads as intentional.  */
+.studio-swatch {
+  background-image:
+    linear-gradient(45deg, color-mix(in oklab, var(--muted-foreground) 18%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in oklab, var(--muted-foreground) 18%, transparent) 75%),
+    linear-gradient(45deg, color-mix(in oklab, var(--muted-foreground) 18%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in oklab, var(--muted-foreground) 18%, transparent) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+  transition: border-color 120ms ease;
+}
+.studio-swatch:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 45%, var(--border));
+}
+.studio-swatch:focus-within {
+  border-color: color-mix(in oklab, var(--foreground) 45%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent);
+}
+
+/* ---- 19d · properties section reveal --------------------------------- */
+/* Subtle 160ms fade+rise when a <details> section opens — content      */
+/* appears settled instead of popping. Frozen under reduced motion.     */
+.studio-section-body {
+  animation: section-reveal 160ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+@keyframes section-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-section-body {
+    animation: none;
+  }
+}
+
+/* ---- 19e · header Export button — primary emphasis ------------------- */
+/* The single global primary action. A subtle vertical micro-gradient
+   (foreground/94 → foreground) gives the CTA dimension, plus a soft outer
+   shadow, a hairline ring and an inner top highlight; hover lifts it a
+   half-pixel, active presses it back down. Still one flat-feeling neutral
+   button — no color noise against the ghost header icons. */
+.studio-export-btn {
+  background-color: var(--foreground);
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--foreground) 94%, var(--background)),
+    var(--foreground)
+  );
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.18),
+    0 0 0 1px rgb(0 0 0 / 0.04),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
+  transition: box-shadow 150ms ease, transform 150ms ease, filter 150ms ease;
+}
+.dark .studio-export-btn {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.5),
+    0 0 0 1px rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.2);
+}
+.studio-export-btn:not(:disabled):hover {
+  filter: brightness(1.08);
+  transform: translateY(-0.5px);
+  box-shadow:
+    0 4px 12px -3px rgb(0 0 0 / 0.28),
+    0 0 0 1px rgb(0 0 0 / 0.05),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+.dark .studio-export-btn:not(:disabled):hover {
+  box-shadow:
+    0 4px 14px -3px rgb(0 0 0 / 0.6),
+    0 0 0 1px rgb(0 0 0 / 0.25),
+    inset 0 1px 0 rgb(255 255 255 / 0.2);
+}
+.studio-export-btn:not(:disabled):active {
+  filter: brightness(0.97);
+  transform: translateY(0.5px);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.16),
+    inset 0 1px 2px rgb(0 0 0 / 0.14);
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-export-btn:not(:disabled):hover,
+  .studio-export-btn:not(:disabled):active {
+    transform: none;
+  }
+}
+
+/* ---- 19f · library search — clearer field ----------------------------- */
+/* Calm, visible focus: neutral ring, no color flash.                    */
+.studio-search:focus-within {
+  border-color: color-mix(in oklab, var(--foreground) 30%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent);
+}
+
+/* ---- 19g · value scrub fields — affordance lift ----------------------- */
+/* The Illustrator-style [───●───][ 122 ] numeric fields: while the     */
+/* owning row is hovered, the value chip pre-highlights so users        */
+/* discover the drag-to-scrub interaction. (Focus/scrub states are      */
+/* already handled inline by the component.)                            */
+.studio-value-row:hover .studio-value {
+  border-color: var(--input);
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+  color: var(--foreground);
+}
+.studio-value-row .studio-value {
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 10 — footer cell-selection pill                               */
+/* ------------------------------------------------------------------ */
+
+/* the "1 cell selected" pill in the footer — a small amber dot
+   (functional: focused-cell state). The pill inherits the
+   .footer-context-button hover/focus treatment. */
+.footer-cell-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d97706;
+  flex-shrink: 0;
+}
+.dark .footer-cell-dot {
+  background: #f59e0b;
+}
+/* hover: the dot scales up slightly like the active-sheet dot */
+.footer-context-button:hover .footer-cell-dot {
+  transform: scale(1.25);
+  transition: transform 140ms ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Round 12 — library tag-scroll invisible scrollbar                    */
+/* ------------------------------------------------------------------ */
+
+/* the library tag-filter row is now a horizontal scroller (was flex-wrap,
+   which wrapped to 3 rows and consumed 100px). Hide the scrollbar for a
+   clean look — the chips still scroll via drag/wheel/touch. */
+.library-tag-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.library-tag-scroll::-webkit-scrollbar {
+  display: none;
+}
+/* round 12b touch */
+
+/* ------------------------------------------------------------------ */
+/* Round 25 — Properties panel "Inspector v2" — full A→Z restyle        */
+/*                                                                     */
+/* A completely new visual language for the RIGHT properties panel:    */
+/* the panel becomes a deep tool surface (the canvas tone) with one    */
+/* floating elevated card per section, amber-accented controls         */
+/* (sliders + switches fill with the app's functional accent),        */
+/* bordered rounded field boxes and normal-case labels. Everything    */
+/* is scoped to .ip-* classes / kit classNames — the export dialog    */
+/* and every other surface keep their current look.                   */
+/* ------------------------------------------------------------------ */
+
+/* panel root — the deep inspector surface (cards float on it) */
+.ip-panel {
+  background: var(--canvas);
+}
+
+/* sticky sheet-identity header — translucent over the scrolling cards */
+.ip-head {
+  background: color-mix(in oklab, var(--canvas) 86%, transparent);
+}
+
+/* ---- amber-filled slider (the panel's primary accent control) ------- */
+/* P5 overlap fix: the hit zone now extends DOWNWARD ONLY. The old
+   symmetric extension (padding-block + negative margin-block) made the
+   slider's pointer target reach 8px UP into the editable value chip
+   above it (reproduced: input bottom y=345, slider hit area top y=337)
+   — clicks in the lower half of the number field grabbed the slider
+   instead. Downward-only keeps the comfortable drag target without ever
+   covering the value input; the panel-kit value row also gets a z-lift
+   as belt-and-braces. */
+.ip-slider {
+  padding-block-end: 0.5rem; /* taller pointer hit zone, same layout box */
+  margin-block-end: -0.5rem;
+}
+.ip-slider [data-slot="slider-track"] {
+  height: 4px;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted-foreground) 20%, transparent);
+  box-shadow: none;
+}
+.dark .ip-slider [data-slot="slider-track"] {
+  background: color-mix(in oklab, var(--muted-foreground) 26%, transparent);
+}
+.ip-slider [data-slot="slider-range"] {
+  border-radius: 999px;
+  background: #d97706; /* amber-600 — the app's functional accent */
+}
+.dark .ip-slider [data-slot="slider-range"] {
+  background: #f59e0b; /* amber-500 */
+}
+.ip-slider [data-slot="slider-thumb"] {
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border: 1px solid rgb(0 0 0 / 0.16);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.24);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.ip-slider:hover [data-slot="slider-thumb"] {
+  transform: scale(1.18);
+}
+.ip-slider [data-slot="slider-thumb"]:focus-visible {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.24),
+    0 0 0 3px color-mix(in oklab, var(--ring) 40%, transparent);
+}
+.ip-slider[data-disabled] {
+  opacity: 0.5;
+}
+
+/* ---- amber switch (checked state) ----------------------------------- */
+.ip-switch[data-state="checked"] {
+  background: #d97706;
+}
+.dark .ip-switch[data-state="checked"] {
+  background: #f59e0b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ip-slider [data-slot="slider-thumb"],
+  .ip-slider:hover [data-slot="slider-thumb"] {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Task 8-b — premium app-chrome polish                                */
+/*                                                                     */
+/* A depth pass over the interactive chrome (never the sheet artwork): */
+/* a reusable hover-lift utility, cohesive toolbar containers, the     */
+/* floating selection "smart bar", and stronger selected states for    */
+/* sheet-nav rows + library tiles. Dark-mode variants everywhere —     */
+/* shadows deepen on dark surfaces where 5% black is invisible.        */
+/* ------------------------------------------------------------------ */
+
+/* ---- 8-b · studio-lift — shared hover elevation ---------------------- */
+/* One transition curve for every liftable card/tile/row: 180ms, a soft
+   exit-style ease. The utility only owns the TRANSITION + hover translate;
+   each surface layers its own resting/hover shadow + border via utilities
+   so light/dark can tune intensity independently. */
+.studio-lift {
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+.studio-lift:hover {
+  transform: translateY(-1px);
+}
+/* dnd-kit rows: while an inline drag transform is active, CSS hover
+   motion is meaningless and can fight the drag — disable it. */
+.studio-lift[style*="transform"] {
+  transition: none;
+}
+.studio-lift[style*="transform"]:hover {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-lift:hover {
+    transform: none;
+  }
+  .studio-lift {
+    transition: box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  }
+}
+
+/* ---- 8-b · sheet-nav rows — defined cards, stronger selection -------- */
+/* The component carries the Tailwind utilities; these unlayered rules
+   sharpen the selected state: a hairline amber border joins the rail +
+   tint so the active row reads unmistakably "current" in both themes,
+   and hovering a NON-active row gets a real elevated edge. */
+.sheet-nav-row[aria-current="true"] {
+  border-color: color-mix(in oklab, #d97706 32%, var(--border));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+}
+.dark .sheet-nav-row[aria-current="true"] {
+  border-color: color-mix(in oklab, #f59e0b 38%, var(--border));
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+.sheet-nav-row[aria-current="true"]:hover {
+  border-color: color-mix(in oklab, #d97706 45%, var(--border));
+}
+.dark .sheet-nav-row[aria-current="true"]:hover {
+  border-color: color-mix(in oklab, #f59e0b 50%, var(--border));
+}
+
+/* ---- 8-b · workspace toolbar — cohesive grouped container ------------ */
+/* The zoom/randomize clusters sit in ONE bordered, blurred pill so they
+   read as a single toolbar instrument cluster instead of loose ghost
+   buttons floating on the bar. */
+.studio-toolbar-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  padding: 0.125rem;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}
+.dark .studio-toolbar-pill {
+  border-color: color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--card) 72%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+/* active toolbar toggles (e.g. Guides ON) — an amber-tinted pressed
+   state that matches the app's single accent language */
+.studio-toolbar-toggle-on {
+  background: color-mix(in oklab, #d97706 13%, transparent);
+  color: color-mix(in oklab, #b45309 85%, var(--foreground));
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.07),
+    0 0 0 1px color-mix(in oklab, #d97706 30%, transparent);
+}
+.dark .studio-toolbar-toggle-on {
+  background: color-mix(in oklab, #f59e0b 16%, transparent);
+  color: #fbbf24;
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.3),
+    0 0 0 1px color-mix(in oklab, #f59e0b 35%, transparent);
+}
+.studio-toolbar-toggle-on:hover {
+  background: color-mix(in oklab, #d97706 19%, transparent);
+}
+.dark .studio-toolbar-toggle-on:hover {
+  background: color-mix(in oklab, #f59e0b 22%, transparent);
+}
+
+/* ---- 8-b · smart bar — the floating selection action bar -------------- */
+/* sheet-preview's selection overlays become a premium "smart bar": a
+   blurred glass pill with a layered two-step shadow, hairline border and
+   150ms quiet hovers. Unlayered rules intentionally sit above the
+   component's utility classes (rounded-xl / bg / shadow-lg) so the
+   presentational markup stays minimal. */
+.studio-smart-bar {
+  border-radius: 999px;
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+  background: color-mix(in oklab, var(--background) 90%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow:
+    0 10px 32px -8px rgb(0 0 0 / 0.24),
+    0 2px 8px -2px rgb(0 0 0 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+.dark .studio-smart-bar {
+  border-color: color-mix(in oklab, var(--border) 80%, transparent);
+  box-shadow:
+    0 10px 34px -8px rgb(0 0 0 / 0.55),
+    0 2px 8px -2px rgb(0 0 0 / 0.4),
+    inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+/* batch variant: amber hairline — signals a transient multi-selection */
+.studio-smart-bar--batch {
+  border-color: color-mix(in oklab, #d97706 42%, var(--border));
+}
+.dark .studio-smart-bar--batch {
+  border-color: color-mix(in oklab, #f59e0b 48%, var(--border));
+}
+.studio-smart-bar button {
+  border-radius: 999px;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.studio-smart-bar button:hover {
+  background: var(--muted);
+}
+.studio-smart-bar button:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-smart-bar button:active {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Task 9-b — dialog & panel chrome polish                              */
+/*                                                                     */
+/* The 8-b pass covered the main app chrome; this section brings every */
+/* dialog and secondary surface to the same standard: an icon tile     */
+/* beside dialog titles (matching the header brand-tile language),     */
+/* hairline top-bordered tinted footers, hover elevation on list rows, */
+/* consistent semantic status chips, premium choice toggles, and a     */
+/* clearer command-palette selection. Dark variants everywhere; all   */
+/* new motion is reduced-motion guarded. Amber/emerald/stone only —   */
+/* never blue/indigo. Unlayered rules sit above Tailwind utilities     */
+/* (same technique as 8-b) so component markup stays minimal.          */
+/* ------------------------------------------------------------------ */
+
+/* ---- 9-b · dialog header icon tile ----------------------------------- */
+/* One shared glyph tile for every dialog title: a 28px amber-tinted
+   square with a hairline amber ring, a soft resting shadow and an
+   amber-700/300 glyph (AA-safe in both themes) — the small sibling of
+   the header's amber gradient brand tile. */
+.studio-dlg-tile {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  color: #b45309;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, #f59e0b 16%, transparent),
+    color-mix(in oklab, #d97706 13%, transparent)
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #d97706 28%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.07);
+}
+.dark .studio-dlg-tile {
+  color: #fbbf24;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, #fbbf24 16%, transparent),
+    color-mix(in oklab, #f59e0b 14%, transparent)
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #f59e0b 36%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+/* ---- 9-b · dialog footer — tinted chrome bar ------------------------- */
+/* Mirrors the .studio-footer language: hairline top border, slightly
+   tinted surface, 1px inner light edge. Components keep their own
+   px/py sizing utilities. */
+.studio-dlg-footer {
+  border-top: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--muted) 22%, var(--background));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+.dark .studio-dlg-footer {
+  border-top-color: color-mix(in oklab, var(--border) 90%, transparent);
+  background: color-mix(in oklab, var(--muted) 26%, var(--background));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.045);
+}
+
+/* ---- 9-b · shared group/section label typography --------------------- */
+/* One quiet label voice for section headers inside dialogs and panels
+   (shortcuts groups, export scope/format, catalog scope, palette
+   groups, inspector sections): 10px semibold caps, 0.08em tracking,
+   contrast-safe muted. */
+.studio-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--muted-foreground) 72%, var(--foreground));
+}
+
+/* ---- 9-b · list rows — hover elevation ------------------------------- */
+/* Generic liftable row for lists inside dialogs (duplicate-import file
+   rows, tag rows, palette-adjacent rows): 150ms bg/border/shadow with a
+   −0.5px whisper of lift. Resting state stays as the component draws
+   it; selected rows opt into the amber tint variant. */
+.studio-row {
+  border-radius: 0.5rem;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+.studio-row:hover {
+  background: color-mix(in oklab, var(--muted) 60%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.07);
+  transform: translateY(-0.5px);
+}
+.dark .studio-row:hover {
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+.studio-row--selected,
+.studio-row--selected:hover {
+  background: color-mix(in oklab, #d97706 7%, transparent);
+}
+.dark .studio-row--selected,
+.dark .studio-row--selected:hover {
+  background: color-mix(in oklab, #f59e0b 9%, transparent);
+}
+
+/* ---- 9-b · status chips — semantic pills with hairlines -------------- */
+/* Base pill carries radius + weight + quiet transition only; the
+   variants own colors (emerald = OK, amber = warning, stone = neutral)
+   with hairline borders in both themes. Sizing stays in components. */
+.studio-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+.studio-chip--ok {
+  border: 1px solid color-mix(in oklab, #059669 34%, transparent);
+  background: color-mix(in oklab, #059669 10%, transparent);
+  color: #047857;
+}
+.dark .studio-chip--ok {
+  border-color: color-mix(in oklab, #34d399 42%, transparent);
+  background: color-mix(in oklab, #34d399 14%, transparent);
+  color: #6ee7b7;
+}
+.studio-chip--warn {
+  border: 1px solid color-mix(in oklab, #d97706 34%, transparent);
+  background: color-mix(in oklab, #d97706 10%, transparent);
+  color: #b45309;
+}
+.dark .studio-chip--warn {
+  border-color: color-mix(in oklab, #f59e0b 44%, transparent);
+  background: color-mix(in oklab, #f59e0b 14%, transparent);
+  color: #fcd34d;
+}
+.studio-chip--neutral {
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+  background: color-mix(in oklab, var(--muted) 50%, transparent);
+  color: color-mix(in oklab, var(--muted-foreground) 78%, var(--foreground));
+}
+.dark .studio-chip--neutral {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+  background: color-mix(in oklab, var(--muted) 65%, transparent);
+}
+
+/* ---- 9-b · choice toggles — radio/segmented cards -------------------- */
+/* The scope/format segmented toggles in export + catalog get the
+   choice-card language: hairline resting border, amber-tinted hover
+   with a 1px lift, unmistakable amber selected state (border + tint +
+   inset), and a focus-visible ring that survives the custom shadow. */
+.studio-choice {
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+.studio-choice:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+  box-shadow: 0 1px 3px -1px rgb(0 0 0 / 0.1);
+  transform: translateY(-1px);
+}
+.dark .studio-choice:hover:not(:disabled) {
+  box-shadow: 0 1px 3px -1px rgb(0 0 0 / 0.45);
+}
+.studio-choice[data-state="on"] {
+  border-color: color-mix(in oklab, #d97706 45%, var(--border));
+  background: color-mix(in oklab, #d97706 10%, transparent);
+  color: color-mix(in oklab, #b45309 92%, var(--foreground));
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.06),
+    0 1px 2px rgb(0 0 0 / 0.06);
+}
+.dark .studio-choice[data-state="on"] {
+  border-color: color-mix(in oklab, #f59e0b 50%, var(--border));
+  background: color-mix(in oklab, #f59e0b 14%, transparent);
+  color: #fbbf24;
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.3),
+    0 1px 2px rgb(0 0 0 / 0.35);
+}
+.studio-choice[data-state="on"]:focus-visible {
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.06),
+    0 1px 2px rgb(0 0 0 / 0.06),
+    0 0 0 3px color-mix(in oklab, #d97706 45%, var(--ring));
+}
+.dark .studio-choice[data-state="on"]:focus-visible {
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.3),
+    0 1px 2px rgb(0 0 0 / 0.35),
+    0 0 0 3px color-mix(in oklab, #f59e0b 50%, var(--ring));
+}
+
+/* ---- 9-b · command palette — clearer selection, amber hover ---------- */
+/* Appended after the round-7 palette rules: the selected row upgrades
+   from a muted slab to an amber-tinted surface with a hairline amber
+   inset (the left rail from round 7 stays); non-selected rows get an
+   amber-whisper hover instead of plain muted. Unlayered rules sit
+   above the component's bg/ring utilities. */
+.palette-row[aria-selected="true"] {
+  background: color-mix(in oklab, #d97706 9%, var(--background));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #d97706 30%, transparent);
+}
+.dark .palette-row[aria-selected="true"] {
+  background: color-mix(in oklab, #f59e0b 11%, var(--background));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #f59e0b 34%, transparent);
+}
+.palette-row:not([aria-selected="true"]):hover {
+  background: color-mix(in oklab, #d97706 5%, transparent);
+}
+.dark .palette-row:not([aria-selected="true"]):hover {
+  background: color-mix(in oklab, #f59e0b 6%, transparent);
+}
+
+/* ---- 9-b · empty-state glyph circle ---------------------------------- */
+/* Shared empty-state language for dialogs (catalog, tag manager,
+   palette already close): centered glyph in a tinted circle with a
+   hairline inset ring — mirrors the properties-panel empty state. */
+.studio-empty-glyph {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 70%, transparent);
+  color: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
+}
+
+/* ---- 9-b · health-report issue rows — hover elevation ---------------- */
+/* Appended after the round-9 health-issue rules: the rows gain the
+   shared 150ms shadow/transform curve (the existing border/bg hover
+   shifts stay; the transition list is re-declared in full because a
+   later `transition` rule replaces the earlier one). */
+.health-issue {
+  transition:
+    border-color 130ms ease,
+    background-color 130ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+.health-issue:hover,
+.health-issue-info:hover,
+.health-issue-warning:hover {
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.14);
+  transform: translateY(-1px);
+}
+.dark .health-issue:hover,
+.dark .health-issue-info:hover,
+.dark .health-issue-warning:hover {
+  box-shadow: 0 2px 10px -4px rgb(0 0 0 / 0.5);
+}
+
+/* ---- 9-b · backup cards — shared lift curve -------------------------- */
+.backup-card {
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+.backup-card:hover,
+.backup-card:focus-within {
+  box-shadow: 0 3px 12px -6px rgb(0 0 0 / 0.16);
+  transform: translateY(-1px);
+}
+.dark .backup-card:hover,
+.dark .backup-card:focus-within {
+  box-shadow: 0 3px 12px -6px rgb(0 0 0 / 0.5);
+}
+
+/* ---- 9-b · inspector related tiles — hover elevation ----------------- */
+.related-tile {
+  transition:
+    border-color 130ms ease,
+    background-color 130ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+.related-tile:hover {
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.12);
+  transform: translateY(-1px);
+}
+.dark .related-tile:hover {
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.45);
+}
+
+/* ---- 9-b · reduced motion — kill every new transform ------------------ */
+/* Color/shadow transitions are fine to keep; only motion is removed. */
+@media (prefers-reduced-motion: reduce) {
+  .studio-row:hover,
+  .studio-choice:hover:not(:disabled),
+  .health-issue:hover,
+  .health-issue-info:hover,
+  .health-issue-warning:hover,
+  .backup-card:hover,
+  .backup-card:focus-within,
+  .related-tile:hover {
+    transform: none;
+  }
+  .studio-row,
+  .studio-choice,
+  .health-issue,
+  .backup-card,
+  .related-tile {
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Task 10-b — deep detail pass: properties panel, sidebar, library    */
+/*                                                                     */
+/* Brings the remaining un-polished surfaces up to the 8-b/9-b chrome */
+/* standard: hairline resting borders (light /60-75, dark full        */
+/* strength), 150-180ms transitions, hover elevation with layered     */
+/* shadows (light black/15, dark black/50), amber as the only         */
+/* accent (amber-600/700 light, amber-400/500 dark, AA-safe).        */
+/* Unlayered rules appended after every earlier section so the       */
+/* cascade position alone carries the overrides — no existing rule   */
+/* is modified. Every transform is reduced-motion guarded.           */
+/* ------------------------------------------------------------------ */
+
+/* ---- 10-b · properties panel section cards ("Inspector v2") -------- */
+/* One floating card per panel section: hairline resting border (the
+   utility said border/80 — too heavy in light mode), a calmer resting
+   shadow, and a subtle amber whisper on the EXPANDED card so the open
+   section reads as current without shouting. The header gains a
+   hairline divider between itself and the body while open, and the
+   chevron calms down at rest and warms up (amber) when open. */
+.ip-card {
+  border-color: color-mix(in oklab, var(--border) 65%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}
+.dark .ip-card {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.32);
+}
+.ip-card[open] {
+  border-color: color-mix(in oklab, #d97706 22%, var(--border));
+}
+.dark .ip-card[open] {
+  border-color: color-mix(in oklab, #f59e0b 26%, var(--border));
+}
+.ip-card[open] > summary {
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+}
+.dark .ip-card[open] > summary {
+  border-bottom-color: color-mix(in oklab, var(--border) 85%, transparent);
+}
+.ip-card > summary {
+  transition: background-color 150ms ease;
+}
+/* chevron: one shared 180ms curve; amber when the section is open */
+.ip-card-chevron {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.3, 1), color 150ms ease;
+}
+.ip-card[open] > summary .ip-card-chevron {
+  color: color-mix(in oklab, #b45309 78%, var(--foreground));
+}
+.dark .ip-card[open] > summary .ip-card-chevron {
+  color: #fbbf24;
+}
+
+/* ---- 10-b · inspector field boxes — hairline resting borders -------- */
+/* The panel-kit FIELD recipe + textareas draw full-strength borders at
+   rest; the app language is a hairline (light ~70%) that darkens on
+   hover and hands off cleanly to the existing focus halo. Focus rules
+   are re-declared unlayered AFTER hover so a focused field never keeps
+   the hover border. */
+.ip-field,
+.lib-search-input {
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+}
+.dark .ip-field,
+.dark .lib-search-input {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+}
+.ip-field:hover,
+.lib-search-input:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 30%, var(--border));
+}
+.dark .ip-field:hover,
+.dark .lib-search-input:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 45%, var(--border));
+}
+.ip-field:focus-visible,
+.ip-field:focus,
+.lib-search-input:focus-visible,
+.lib-search-input:focus {
+  border-color: var(--ring);
+}
+
+/* ---- 10-b · segmented controls (panel-kit + library filter) -------- */
+/* Panel-kit SegmentedField container: hairline ring instead of the
+   full-strength input border; the active pill (foreground on
+   background) already carries the hierarchy. */
+.ip-seg {
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+}
+.dark .ip-seg {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+}
+/* Library "All / Unassigned" filter: a defined hairline container with
+   an amber pressed state for the active segment — the same accent
+   language as .studio-toolbar-toggle-on, scaled down for the sidebar. */
+.studio-seg {
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  background: color-mix(in oklab, var(--muted) 40%, transparent);
+  border-radius: 0.5rem;
+}
+.dark .studio-seg {
+  border-color: color-mix(in oklab, var(--border) 90%, transparent);
+}
+.studio-seg-item {
+  border-radius: 0.375rem;
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.studio-seg-item[data-state="on"] {
+  background: color-mix(in oklab, #d97706 12%, transparent);
+  color: #b45309;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #d97706 30%, transparent);
+}
+.dark .studio-seg-item[data-state="on"] {
+  background: color-mix(in oklab, #f59e0b 14%, transparent);
+  color: #fbbf24;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #f59e0b 34%, transparent);
+}
+.studio-seg-item[data-state="on"]:hover {
+  background: color-mix(in oklab, #d97706 17%, transparent);
+}
+.dark .studio-seg-item[data-state="on"]:hover {
+  background: color-mix(in oklab, #f59e0b 19%, transparent);
+}
+
+/* ---- 10-b · design preset pills — hover lift (Design section) ------- */
+/* The DESIGN_PRESETS pills get the library-tile language: hairline
+   rest, 1px hover lift with a layered shadow and an amber border
+   whisper. Focus-visible re-declares the ring so it survives the
+   custom box-shadow. */
+.studio-preset-chip {
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+  transition:
+    transform 150ms cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    background-color 150ms ease;
+}
+.dark .studio-preset-chip {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+}
+.studio-preset-chip:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  color: var(--foreground);
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.15);
+}
+.dark .studio-preset-chip:hover {
+  border-color: color-mix(in oklab, #f59e0b 45%, var(--border));
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.5);
+}
+.studio-preset-chip:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 40%, transparent);
+}
+
+/* ---- 10-b · quick target preset buttons (STROKE section) ------------ */
+/* The 0.5 / 1 / 2 / 5 px target row joins the same micro-elevation
+   language; the amber active state from the component stays intact. */
+.ip-target-btn {
+  transition:
+    transform 150ms cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    background-color 150ms ease;
+}
+.ip-target-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px -3px rgb(0 0 0 / 0.15);
+}
+.dark .ip-target-btn:hover {
+  box-shadow: 0 2px 6px -3px rgb(0 0 0 / 0.5);
+}
+.ip-target-btn:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 40%, transparent);
+}
+
+/* ---- 10-b · status-notice chips — chip language, panel shape -------- */
+/* The stroke-exception notice carries .studio-chip--warn colors but
+   keeps a card radius so a two-line notice never renders as a
+   stadium. */
+.ip-notice {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-align: left;
+}
+
+/* ---- 10-b · color swatches — resting hairline + hover scale --------- */
+/* Appended after round 19c: the checkerboard swatch gets the hairline
+   resting border, a gentle 1.06 hover scale with a soft shadow, and a
+   combined ring+elevation while the picker inside is focused. */
+.studio-swatch {
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+.dark .studio-swatch {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+}
+.studio-swatch:hover {
+  transform: scale(1.06);
+  box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.2);
+}
+.dark .studio-swatch:hover {
+  box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.55);
+}
+.studio-swatch:focus-within {
+  border-color: color-mix(in oklab, var(--foreground) 45%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent),
+    0 2px 6px -2px rgb(0 0 0 / 0.2);
+}
+.dark .studio-swatch:focus-within {
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent),
+    0 2px 6px -2px rgb(0 0 0 / 0.55);
+}
+
+/* ---- 10-b · slider thumb — pressed feedback ------------------------- */
+/* Appended after the round-25 ip-slider rules: the thumb grows while
+   the pointer drags (in addition to the existing hover scale). */
+.ip-slider:active [data-slot="slider-thumb"] {
+  transform: scale(1.26);
+}
+/* P5 note: the value-row z-lift is applied via inline Tailwind utilities
+   (relative z-[1]) in panel-kit/small-controls — a plain rule here was
+   observed being dropped by the dev CSS pipeline. */
+
+/* ---- 10-b · sidebar tab strip — amber active underline + chips ------ */
+/* Active tab keeps its raised pill (utilities) and gains a small amber
+   underline bar — the app's single accent marking "current". The tab
+   count becomes a tiny hairline chip; on the active tab it takes the
+   amber tint, mirroring .tag-chip[data-active]. */
+.studio-tab {
+  position: relative;
+}
+.studio-tab[data-state="active"]::after {
+  content: "";
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #d97706;
+  transform: translateX(-50%);
+}
+.dark .studio-tab[data-state="active"]::after {
+  background: #f59e0b;
+}
+.studio-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.28rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--background) 72%, transparent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--muted-foreground) 75%, var(--foreground));
+}
+.dark .studio-tab-count {
+  border-color: color-mix(in oklab, var(--border) 100%, transparent);
+  background: color-mix(in oklab, var(--background) 60%, transparent);
+}
+.studio-tab[data-state="active"] .studio-tab-count {
+  border-color: color-mix(in oklab, #d97706 36%, transparent);
+  background: color-mix(in oklab, #d97706 10%, transparent);
+  color: #b45309;
+}
+.dark .studio-tab[data-state="active"] .studio-tab-count {
+  border-color: color-mix(in oklab, #f59e0b 42%, transparent);
+  background: color-mix(in oklab, #f59e0b 12%, transparent);
+  color: #fbbf24;
+}
+
+/* ---- 10-b · library tag chips — elevated hover ---------------------- */
+/* Appended after the round-6 rules: hovering a filter chip now lifts
+   its surface (bg + border), and an ACTIVE chip deepens instead of
+   washing out. Zero size change — the row height is layout-critical. */
+.tag-chip:hover {
+  background: color-mix(in oklab, var(--muted) 75%, transparent);
+  border-color: color-mix(in oklab, var(--muted-foreground) 42%, var(--border));
+}
+.dark .tag-chip:hover {
+  background: color-mix(in oklab, var(--muted) 85%, transparent);
+}
+.tag-chip[data-active="true"]:hover {
+  background: color-mix(in oklab, #d97706 12%, transparent);
+  border-color: color-mix(in oklab, #d97706 45%, var(--border));
+}
+.dark .tag-chip[data-active="true"]:hover {
+  background: color-mix(in oklab, #f59e0b 14%, transparent);
+  border-color: color-mix(in oklab, #f59e0b 50%, var(--border));
+}
+
+/* ---- 10-b · library search tool buttons (density / sort) ------------ */
+/* The two 24px icon buttons inside the search field: while a non-
+   default density or sort is live they carry a quiet amber tint (the
+   utility classes only colored the glyph — a 3.5px glyph alone reads
+   as decoration). Rest/hover/focus behavior is otherwise unchanged. */
+.lib-tool-btn {
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.lib-tool-btn[data-active="true"] {
+  color: #b45309;
+  background: color-mix(in oklab, #d97706 9%, transparent);
+}
+.dark .lib-tool-btn[data-active="true"] {
+  color: #fbbf24;
+  background: color-mix(in oklab, #f59e0b 12%, transparent);
+}
+.lib-tool-btn[data-active="true"]:hover {
+  background: color-mix(in oklab, #d97706 15%, transparent);
+}
+.dark .lib-tool-btn[data-active="true"]:hover {
+  background: color-mix(in oklab, #f59e0b 18%, transparent);
+}
+
+/* ---- 10-b · AI suggest button — amber hover affordance --------------- */
+/* The one AI action in the properties panel: an amber border whisper
+   + tint on hover (it already leads with an amber Sparkles glyph). */
+.ai-suggest-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #d97706 42%, var(--border));
+  background: color-mix(in oklab, #d97706 6%, transparent);
+}
+.dark .ai-suggest-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #f59e0b 48%, var(--border));
+  background: color-mix(in oklab, #f59e0b 8%, transparent);
+}
+
+/* ---- 10-b · reduced motion — kill every new transform --------------- */
+@media (prefers-reduced-motion: reduce) {
+  .studio-preset-chip:hover,
+  .ip-target-btn:hover,
+  .studio-swatch:hover {
+    transform: none;
+  }
+  .ip-slider:active [data-slot="slider-thumb"] {
+    transform: none;
+  }
+  .studio-preset-chip,
+  .ip-target-btn,
+  .studio-swatch,
+  .ip-card-chevron {
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      box-shadow 150ms ease;
+  }
+}
+
+/* ---- 10-b · invalid field boxes — keep the destructive border ------- */
+/* The unlayered hairline above would otherwise swallow the layered
+   border-destructive utility; the invalid state re-declares it here
+   (later position, same layer) for every interaction state. */
+.ip-field.ip-field-invalid,
+.ip-field.ip-field-invalid:hover,
+.ip-field.ip-field-invalid:focus,
+.ip-field.ip-field-invalid:focus-visible {
+  border-color: var(--destructive);
+}
+
+/* ---- 10-b · collapsible section headers — keyboard focus ring ------- */
+/* Both section languages (panel-kit .ip-card summary + small-controls
+   .studio-section-summary) drew focus with a background tint only;
+   keyboard users now also get a visible inset hairline ring. */
+.ip-card > summary:focus-visible,
+.studio-section-summary:focus-visible {
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--ring) 45%, transparent);
+}
+
+/* ================================================================== */
+/* Task 11-b — toast theme, tooltip chrome, cell-drop + overview       */
+/* ================================================================== */
+/* Sonner injects its stylesheet at RUNTIME (appended to the end of    */
+/* <head>), so it wins every specificity tie against this file. Every  */
+/* rule below therefore carries a deliberately higher specificity      */
+/* (html/ol/li type selectors + [data-styled] on top of sonner's own   */
+/* attributes) so the app's chrome language wins by specificity, not   */
+/* by cascade order. Zero JS/prop changes — the Toaster mount in       */
+/* layout.tsx is untouched.                                            */
+
+/* ---- 11-b · sonner container — app font + card radius --------------- */
+html ol[data-sonner-toaster] {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --border-radius: var(--radius);
+}
+/* close button sits at the conventional top-right corner (sonner v2
+   defaults to top-left; flipped with direct properties — the var-based
+   route gets pruned by the CSS compiler) */
+html ol[data-sonner-toaster] li[data-sonner-toast] [data-close-button] {
+  left: auto;
+  right: 0;
+  transform: translate(35%, -35%);
+}
+
+/* ---- 11-b · sonner theme vars — normal toasts become app cards ----- */
+/* Redefines sonner's --normal-* tokens on the toaster list itself so
+   neutral toasts, action buttons (which invert these) and the close
+   button all derive from the app's popover/hairline language. */
+html:not(.dark) ol[data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--popover);
+  --normal-border: color-mix(in oklab, var(--border) 72%, transparent);
+  --normal-text: var(--popover-foreground);
+}
+html.dark ol[data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--popover);
+  --normal-border: var(--border);
+  --normal-text: var(--popover-foreground);
+}
+
+/* ---- 11-b · toast card — padding, type scale, layered shadow ------- */
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] {
+  padding: 13px 16px;
+  font-size: 12.5px;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 10px 28px -10px rgb(0 0 0 / 0.18);
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] {
+  padding: 13px 16px;
+  font-size: 12.5px;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 12px 32px -10px rgb(0 0 0 / 0.6);
+}
+/* keyboard focus ring survives the shadow override above */
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"]:focus-visible {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 10px 28px -10px rgb(0 0 0 / 0.18),
+    0 0 0 2px color-mix(in oklab, var(--ring) 50%, transparent);
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"]:focus-visible {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 12px 32px -10px rgb(0 0 0 / 0.6),
+    0 0 0 2px color-mix(in oklab, var(--ring) 60%, transparent);
+}
+
+/* ---- 11-b · toast typography — 12.5px title, muted 11px description - */
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-title] {
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-description] {
+  font-size: 11px;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--muted-foreground) 70%, var(--popover-foreground));
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-description] {
+  font-size: 11px;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--muted-foreground) 82%, var(--popover-foreground));
+}
+
+/* ---- 11-b · semantic toasts — the app's tint style (chips) --------- */
+/* Emerald success, amber info/warning (the app's only accent), red
+   error: /7–11 tinted backgrounds over the popover, /26–44 hairline
+   borders, AA-safe title shades, /100 icon colors — mirroring the
+   .studio-chip--ok/--warn language from 9-b in both themes. */
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="success"] {
+  background: color-mix(in oklab, #059669 7%, var(--popover));
+  border-color: color-mix(in oklab, #059669 30%, transparent);
+  color: #047857;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="success"] [data-icon] {
+  color: #059669;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="info"] {
+  background: color-mix(in oklab, #d97706 5%, var(--popover));
+  border-color: color-mix(in oklab, #d97706 26%, transparent);
+  color: #b45309;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="info"] [data-icon] {
+  color: #d97706;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="warning"] {
+  background: color-mix(in oklab, #d97706 9%, var(--popover));
+  border-color: color-mix(in oklab, #d97706 34%, transparent);
+  color: #b45309;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="warning"] [data-icon] {
+  color: #d97706;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="error"] {
+  background: color-mix(in oklab, #dc2626 7%, var(--popover));
+  border-color: color-mix(in oklab, #dc2626 30%, transparent);
+  color: #b91c1c;
+}
+html:not(.dark) ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="error"] [data-icon] {
+  color: #dc2626;
+}
+
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="success"] {
+  background: color-mix(in oklab, #34d399 10%, var(--popover));
+  border-color: color-mix(in oklab, #34d399 38%, transparent);
+  color: #6ee7b7;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="success"] [data-icon] {
+  color: #34d399;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="info"] {
+  background: color-mix(in oklab, #f59e0b 7%, var(--popover));
+  border-color: color-mix(in oklab, #f59e0b 34%, transparent);
+  color: #fcd34d;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="info"] [data-icon] {
+  color: #fbbf24;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="warning"] {
+  background: color-mix(in oklab, #f59e0b 11%, var(--popover));
+  border-color: color-mix(in oklab, #f59e0b 44%, transparent);
+  color: #fcd34d;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="warning"] [data-icon] {
+  color: #fbbf24;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="error"] {
+  background: color-mix(in oklab, #f87171 9%, var(--popover));
+  border-color: color-mix(in oklab, #f87171 38%, transparent);
+  color: #fca5a5;
+}
+html.dark ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"][data-type="error"] [data-icon] {
+  color: #f87171;
+}
+
+/* ---- 11-b · close button — quiet ghost, hairline, 150ms ------------ */
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-close-button] {
+  background: color-mix(in oklab, var(--popover) 55%, transparent);
+  border-color: color-mix(in oklab, var(--border) 80%, transparent);
+  color: var(--muted-foreground);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-close-button]:hover {
+  background: color-mix(in oklab, var(--popover) 88%, transparent);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-close-button]:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 50%, transparent);
+}
+
+/* ---- 11-b · action button — chip radius + weight -------------------- */
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-button] {
+  border-radius: 6px;
+  font-weight: 600;
+  height: 26px;
+}
+html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-button]:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 50%, transparent);
+}
+
+/* ---- 11-b · overview sheet-card count chip -------------------------- */
+/* The icon/capacity Badge becomes the chip language (hairline pill,
+   tabular mono); a FULL sheet gets the amber "complete" treatment that
+   matches its own 100% amber fill rail. */
+.overview-count-chip {
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+  color: color-mix(in oklab, var(--muted-foreground) 78%, var(--foreground));
+  font-weight: 600;
+}
+.dark .overview-count-chip {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 65%, transparent);
+}
+.overview-count-chip--full {
+  border-color: color-mix(in oklab, #d97706 38%, transparent);
+  background: color-mix(in oklab, #d97706 10%, transparent);
+  color: #b45309;
+}
+.dark .overview-count-chip--full {
+  border-color: color-mix(in oklab, #f59e0b 44%, transparent);
+  background: color-mix(in oklab, #f59e0b 14%, transparent);
+  color: #fbbf24;
+}
+
+/* ---- 11-b · overview "Apply design to selected" — amber hover ------- */
+/* Appended after the round-5 neutral hover (same specificity, later
+   position wins): the bar's primary batch action now gets the shared
+   amber-whisper hover used by every choice control. */
+.overview-apply-button:not(:disabled):hover {
+  border-color: color-mix(in oklab, #d97706 40%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+  color: color-mix(in oklab, #b45309 30%, var(--foreground));
+}
+.dark .overview-apply-button:not(:disabled):hover {
+  border-color: color-mix(in oklab, #f59e0b 45%, var(--border));
+  background: color-mix(in oklab, #f59e0b 9%, transparent);
+}
+
+/* ---- 11-b · reduced motion — kill the new transitions --------------- */
+/* Sonner's own guard already neutralizes toast-child transitions with
+   !important; this covers everything else added in this section. */
+@media (prefers-reduced-motion: reduce) {
+  html ol[data-sonner-toaster] li[data-sonner-toast][data-styled="true"] [data-close-button] {
+    transition: none;
+  }
+}
+
+
+
+/* ================================================================== */
+/* Task 12-b — similarity dialog · workspace canvas · overview polish  */
+/*                                                                    */
+/* The last un-styled surfaces join the 8-b–11-b chrome language,     */
+/* via appended rules only (later cascade position wins). Includes    */
+/* a real defect fix: the unlayered .sheet-stack paper shadow beat    */
+/* every Tailwind ring/shadow utility on .sheet-artboard (utilities   */
+/* live in @layer utilities), so the amber "Editing" outline and the  */
+/* inactive hairline never rendered — re-composited below.            */
+/* ================================================================== */
+
+/* ---- 12-b · similarity dialog — group cards: hairline + hover elevation */
+.sim-group {
+  border-color: color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--card) 55%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+/* no translate here — member tiles inside already lift; nested motion
+   would read noisy. Elevation = border + shadow only. */
+.sim-group:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 24%, var(--border));
+  box-shadow: 0 3px 10px -4px rgb(0 0 0 / 0.13);
+}
+.dark .sim-group {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.dark .sim-group:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 32%, var(--border));
+  box-shadow: 0 3px 10px -4px rgb(0 0 0 / 0.5);
+}
+
+/* ---- 12-b · similarity dialog — member tiles: the library-tile language */
+/* 150ms lift curve, amber border whisper + layered hover shadow. */
+.sim-tile {
+  transition:
+    transform 150ms cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.sim-tile:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, #d97706 42%, var(--border));
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.15);
+}
+.dark .sim-tile:hover {
+  border-color: color-mix(in oklab, #f59e0b 48%, var(--border));
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.5);
+}
+
+/* icon stage: faint neutral tint + hairline inset ring */
+.sim-tile-art {
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 55%, transparent);
+}
+.dark .sim-tile-art {
+  background: color-mix(in oklab, var(--muted) 26%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 75%, transparent);
+}
+
+/* armed "Keep this" — the emerald keeper state, unmistakable: solid
+   border + halo ring + glow; armed = modal, so the hover lift is off. */
+.sim-tile--keep {
+  border-color: color-mix(in oklab, #059669 75%, transparent);
+  background: color-mix(in oklab, #059669 8%, var(--card));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, #059669 14%, transparent),
+    0 6px 18px -8px color-mix(in oklab, #059669 45%, transparent);
+}
+.sim-tile--keep:hover {
+  transform: none;
+  border-color: color-mix(in oklab, #059669 85%, transparent);
+}
+.dark .sim-tile--keep {
+  border-color: color-mix(in oklab, #34d399 70%, transparent);
+  background: color-mix(in oklab, #34d399 12%, var(--card));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, #34d399 16%, transparent),
+    0 6px 18px -8px color-mix(in oklab, #34d399 30%, transparent);
+}
+
+/* armed "Delete" — the same unmistakable treatment in amber */
+.sim-tile--remove {
+  border-color: color-mix(in oklab, #d97706 70%, transparent);
+  background: color-mix(in oklab, #d97706 8%, var(--card));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, #d97706 14%, transparent),
+    0 6px 18px -8px color-mix(in oklab, #d97706 40%, transparent);
+}
+.sim-tile--remove:hover {
+  transform: none;
+  border-color: color-mix(in oklab, #d97706 80%, transparent);
+}
+.dark .sim-tile--remove {
+  border-color: color-mix(in oklab, #f59e0b 65%, transparent);
+  background: color-mix(in oklab, #f59e0b 12%, var(--card));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, #f59e0b 16%, transparent),
+    0 6px 18px -8px color-mix(in oklab, #f59e0b 28%, transparent);
+}
+
+/* confirm buttons — matching semantic glow whispers */
+.sim-keep-btn {
+  box-shadow: 0 2px 8px -4px color-mix(in oklab, #059669 55%, transparent);
+}
+.sim-keep-btn:hover {
+  box-shadow: 0 3px 10px -4px color-mix(in oklab, #059669 60%, transparent);
+}
+.sim-delete-btn {
+  box-shadow: 0 2px 8px -4px color-mix(in oklab, #d97706 55%, transparent);
+}
+.sim-delete-btn:hover {
+  box-shadow: 0 3px 10px -4px color-mix(in oklab, #d97706 60%, transparent);
+}
+
+/* unpressed filter chips — amber hover affordance (unlayered, so it
+   works regardless of the (hover:none) media Tailwind gates hovers on) */
+.sim-filter[aria-pressed="false"]:hover {
+  border-color: color-mix(in oklab, #d97706 42%, transparent);
+  color: var(--foreground);
+}
+.dark .sim-filter[aria-pressed="false"]:hover {
+  border-color: color-mix(in oklab, #f59e0b 48%, transparent);
+}
+
+/* ---- 12-b · workspace toolbar — finished instrument bar ---------------- */
+/* Hairline bottom edge + vertical tint + a whisper of shadow so the
+   bar reads as chrome sitting above the dotted canvas. */
+.ws-toolbar {
+  border-bottom-color: color-mix(in oklab, var(--border) 75%, transparent);
+  background: linear-gradient(
+    to bottom,
+    var(--background),
+    color-mix(in oklab, var(--muted) 9%, var(--background))
+  );
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.03);
+}
+.dark .ws-toolbar {
+  border-bottom-color: color-mix(in oklab, var(--border) 90%, transparent);
+  background: linear-gradient(
+    to bottom,
+    var(--background),
+    color-mix(in oklab, var(--muted) 6%, var(--background))
+  );
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+}
+
+/* zoom percentage readout — hairline mono chip with the amber hover */
+.ws-zoom-readout {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.ws-zoom-readout:hover {
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+  color: var(--foreground);
+}
+.dark .ws-zoom-readout {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+}
+.dark .ws-zoom-readout:hover {
+  border-color: color-mix(in oklab, #f59e0b 45%, var(--border));
+  background: color-mix(in oklab, #f59e0b 9%, transparent);
+}
+
+/* viewed-vs-active context cluster — quiet hairline pill */
+.ws-context {
+  border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  border-radius: 999px;
+  padding: 0.1875rem 0.625rem;
+}
+.dark .ws-context {
+  border-color: color-mix(in oklab, var(--border) 90%, transparent);
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+}
+
+/* ---- 12-b · artboard label strip — chip-language status ---------------- */
+.ws-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  line-height: 1;
+}
+.ws-chip--skip {
+  border-color: color-mix(in oklab, var(--muted-foreground) 24%, transparent);
+  background: color-mix(in oklab, var(--muted-foreground) 10%, transparent);
+  color: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
+}
+.dark .ws-chip--skip {
+  border-color: color-mix(in oklab, var(--muted-foreground) 34%, transparent);
+  background: color-mix(in oklab, var(--muted-foreground) 14%, transparent);
+}
+.ws-chip--fill {
+  border-color: color-mix(in oklab, #d97706 32%, transparent);
+  background: color-mix(in oklab, #d97706 10%, transparent);
+  color: #b45309;
+}
+.dark .ws-chip--fill {
+  border-color: color-mix(in oklab, #f59e0b 42%, transparent);
+  background: color-mix(in oklab, #f59e0b 14%, transparent);
+  color: #fbbf24;
+}
+/* the Editing chip is the strongest signal in the strip: amber tint
+   gradient + defined border + shadow (mirrors the pressed toggle) */
+.ws-chip--edit {
+  border-color: color-mix(in oklab, #d97706 45%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, #d97706 16%, transparent),
+    color-mix(in oklab, #d97706 10%, transparent)
+  );
+  color: #b45309;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+}
+.dark .ws-chip--edit {
+  border-color: color-mix(in oklab, #f59e0b 55%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, #f59e0b 20%, transparent),
+    color-mix(in oklab, #f59e0b 12%, transparent)
+  );
+  color: #fbbf24;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+/* capacity count — hairline mono chip (the tab-count chip language) */
+.ws-count {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.0625rem 0.375rem;
+  color: color-mix(in oklab, var(--muted-foreground) 80%, var(--foreground));
+}
+.dark .ws-count {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+}
+
+/* ---- 12-b · artboard rings — re-composite over the paper stack --------- */
+/* DEFECT FIX (see section header). Light ring = amber-600 (#d97706),
+   dark = amber-500 (#f59e0b) — the app's selected-sheet register. */
+.sheet-artboard[aria-current="true"] {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, #d97706 85%, transparent),
+    0 0 0 6px color-mix(in oklab, #d97706 10%, transparent),
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 18px 40px -18px rgb(0 0 0 / 0.22),
+    0 10px 24px -12px rgb(0 0 0 / 0.1);
+}
+.dark .sheet-artboard[aria-current="true"] {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, #f59e0b 85%, transparent),
+    0 0 0 6px color-mix(in oklab, #f59e0b 12%, transparent),
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 18px 40px -18px rgb(0 0 0 / 0.5);
+}
+.sheet-artboard:not([aria-current="true"]) {
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.1),
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 18px 40px -18px rgb(0 0 0 / 0.22);
+}
+.dark .sheet-artboard:not([aria-current="true"]) {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.09),
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 18px 40px -18px rgb(0 0 0 / 0.5);
+}
+.sheet-artboard:not([aria-current="true"]):hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #d97706 45%, transparent),
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 14px 32px -16px rgb(0 0 0 / 0.2);
+}
+.dark .sheet-artboard:not([aria-current="true"]):hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #f59e0b 50%, transparent),
+    3px 3px 0 0 var(--card),
+    3.5px 3.5px 0 0 var(--border),
+    0 14px 32px -16px rgb(0 0 0 / 0.55);
+}
+
+/* ---- 12-b · workspace canvas — quieter dots + sticky top fade ---------- */
+/* Default `scroll` attachment keeps the fade fixed to the canvas
+   viewport, so it never scrolls away with the artboards. */
+.workspace-canvas {
+  background-color: color-mix(in oklab, var(--muted) 24%, var(--canvas));
+  background-image:
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--background) 42%, transparent),
+      transparent 76px
+    ),
+    radial-gradient(
+      color-mix(in oklab, var(--muted-foreground) 16%, transparent) 1px,
+      transparent 1.1px
+    );
+  background-size: 100% 76px, 24px 24px;
+  background-repeat: no-repeat, repeat;
+}
+.dark .workspace-canvas {
+  background-color: color-mix(in oklab, var(--muted) 18%, var(--canvas));
+  background-image:
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--background) 32%, transparent),
+      transparent 76px
+    ),
+    radial-gradient(
+      color-mix(in oklab, var(--muted-foreground) 13%, transparent) 1px,
+      transparent 1.1px
+    );
+}
+
+/* ---- 33 · Space + drag canvas panning (use-canvas-pan.ts) ----------------
+   Pan mode is driven purely by `data-pan-mode` on the scrollable canvas
+   (class `pan-canvas`):  "armed" = Space held, "dragging" = Space + left
+   button pan in flight. Unlayered rules win over @layer utilities, so the
+   inert-children rules deterministically beat every pointer-events / cursor
+   utility the artboards and cell hotspots carry. */
+.pan-canvas[data-pan-mode="armed"] {
+  cursor: grab;
+}
+.pan-canvas[data-pan-mode="dragging"] {
+  cursor: grabbing;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* While pan mode is on, every sheet/cell child is hit-test inert: the
+   pointer belongs to the canvas (pan) — no icon selection, no dnd-kit drag
+   start, no artboard activation, no text selection. Hit-testing falls
+   through to the canvas itself, whose listeners run the pan. */
+.pan-canvas[data-pan-mode="armed"] *,
+.pan-canvas[data-pan-mode="dragging"] * {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---- 12-b · workspace "no sheets" empty state --------------------------- */
+.ws-empty {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--card) 55%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  padding: 2rem 2.5rem;
+}
+.dark .ws-empty {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/* ---- 12-b · overview — generate banner + empty card ---------------------- */
+/* The onboarding banner becomes a refined amber hairline card: a
+   directional wash over the card surface, inner top light edge, a
+   resting whisper shadow; the Layers glyph joins the gradient tile
+   language (.studio-dlg-tile's 32px sibling). */
+.overview-generate {
+  border-color: color-mix(in oklab, #d97706 34%, transparent);
+  background:
+    linear-gradient(
+      115deg,
+      color-mix(in oklab, #d97706 7%, transparent),
+      transparent 48%
+    ),
+    var(--card);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    inset 0 1px 0 rgb(255 255 255 / 0.4);
+}
+.dark .overview-generate {
+  border-color: color-mix(in oklab, #f59e0b 38%, transparent);
+  background:
+    linear-gradient(
+      115deg,
+      color-mix(in oklab, #f59e0b 6%, transparent),
+      transparent 48%
+    ),
+    var(--card);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.3),
+    inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+.overview-generate-tile {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, #f59e0b 18%, transparent),
+    color-mix(in oklab, #d97706 14%, transparent)
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #d97706 28%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.07);
+  color: #b45309;
+}
+.dark .overview-generate-tile {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, #fbbf24 16%, transparent),
+    color-mix(in oklab, #f59e0b 13%, transparent)
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #f59e0b 36%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.35);
+  color: #fbbf24;
+}
+/* the overview's own no-sheets card (the shared empty-state language) */
+.overview-empty-card {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--card) 55%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  padding: 2rem 2.25rem;
+}
+.dark .overview-empty-card {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/* ---- 12-b · hero feature chips (studio-app markup, CSS only) ------------ */
+/* Hairline rest, 180ms hover lift with layered shadow + amber border
+   whisper; the glyph warms to the accent on hover. Focus-visible
+   re-declares the ring so it survives the custom box-shadow. */
+.empty-state-feature-card {
+  border-color: color-mix(in oklab, var(--border) 70%, transparent);
+  background: color-mix(in oklab, var(--card) 80%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+.empty-state-feature-card:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  background: var(--card);
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.15);
+}
+.empty-state-feature-card:focus-visible {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 0 0 2px color-mix(in oklab, var(--ring) 55%, transparent);
+}
+.dark .empty-state-feature-card {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.dark .empty-state-feature-card:hover {
+  border-color: color-mix(in oklab, #f59e0b 45%, var(--border));
+  box-shadow: 0 2px 8px -4px rgb(0 0 0 / 0.5);
+}
+.empty-state-feature-icon {
+  transition: color 180ms ease;
+}
+.empty-state-feature-card:hover .empty-state-feature-icon {
+  color: #b45309;
+}
+.dark .empty-state-feature-card:hover .empty-state-feature-icon {
+  color: #fbbf24;
+}
+
+/* the "Load 64 sample icons" CTA — appended after the round-9 neutral
+   hover (same specificity, later position wins): the shared amber
+   whisper used by every choice control in the app */
+.empty-state-cta:hover {
+  border-color: color-mix(in oklab, #d97706 34%, transparent);
+  background: color-mix(in oklab, #d97706 5%, transparent);
+  color: color-mix(in oklab, #b45309 60%, var(--foreground));
+}
+.dark .empty-state-cta:hover {
+  border-color: color-mix(in oklab, #f59e0b 38%, transparent);
+  background: color-mix(in oklab, #f59e0b 8%, transparent);
+  color: #fbbf24;
+}
+
+/* ---- 12-b · reduced motion — kill every new transform ------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .sim-tile:hover,
+  .empty-state-feature-card:hover {
+    transform: none;
+  }
+  .sim-tile,
+  .empty-state-feature-card {
+    transition:
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+}
+
+/* ================================================================== */
+/* Task 13-b — deep detail pass: export · stroke report · health ·    */
+/* shortcuts · AI settings · catalog dialogs                          */
+/*                                                                    */
+/* Round 9-b established the shared dialog chrome (tiles, footers,    */
+/* chips, choice toggles); this pass goes one level deeper on the     */
+/* spots that never got the language: the stroke report's hand-rolled */
+/* header/footer/filter/table (built in 8-a, before the language      */
+/* settled), export's filename/progress/preview details + card-grid   */
+/* choices, health's stat cells + glyph tiles + action affordances,   */
+/* shortcut keycap hovers, the AI provider radio alignment, and       */
+/* catalog stat elevation. Same rules as every round: appended        */
+/* unlayered CSS only (later cascade position wins over both older    */
+/* unlayered rules and Tailwind's layered utilities), hairlines       */
+/* light /60–75 · dark full-strength, 150–180ms ease transitions,     */
+/* amber-only accent register (#b45309 light / #f59e0b dark), dark    */
+/* variant for every shadow/border, reduced-motion guards.            */
+/* ================================================================== */
+
+/* ---- 13-b · export — filename preview chip --------------------------- */
+/* The mono filename line becomes a hairline chip so the file the user
+   is about to produce reads as a concrete artifact (the zoom-readout
+   chip language). Non-interactive: no hover, just surface + hairline. */
+.ex-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--muted) 28%, transparent);
+}
+.dark .ex-file-chip {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 38%, transparent);
+}
+
+/* ---- 13-b · export — preview checklist: resting elevation ------------- */
+.ex-preview {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.dark .ex-preview {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/* ---- 13-b · export — amber progress meter ----------------------------- */
+/* The real-progress bar joins the accent register: amber-tinted track +
+   amber gradient fill with a whisper of depth (the export CTA's twin). */
+.ex-progress {
+  background: color-mix(in oklab, #d97706 13%, transparent);
+}
+.ex-progress [data-slot="progress-indicator"] {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.dark .ex-progress {
+  background: color-mix(in oklab, #f59e0b 16%, transparent);
+}
+.dark .ex-progress [data-slot="progress-indicator"] {
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+}
+
+/* ---- 13-b · stroke report — summary strip: hairline + elevation ------- */
+/* Stat cells answer hover with a tint (they all carry tooltips). */
+.sr-stats {
+  border-color: color-mix(in oklab, var(--border) 75%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.dark .sr-stats {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.sr-stats > div {
+  transition: background-color 150ms ease;
+}
+.sr-stats > div:hover {
+  background: color-mix(in oklab, var(--muted) 42%, transparent);
+}
+.dark .sr-stats > div:hover {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+
+/* ---- 13-b · stroke report — status filter chips ------------------------ */
+/* Unpressed chips get the shared amber hover affordance (the sim-filter
+   language); the pressed state stays the component's amber utilities. */
+.sr-filter[aria-pressed="false"]:hover {
+  border-color: color-mix(in oklab, #d97706 42%, transparent);
+  color: var(--foreground);
+}
+.dark .sr-filter[aria-pressed="false"]:hover {
+  border-color: color-mix(in oklab, #f59e0b 48%, transparent);
+}
+
+/* ---- 13-b · stroke report — table chrome -------------------------------- */
+/* Scroll box: dark full-strength hairline + a resting whisper. The
+   sticky header gains a real bottom hairline so rows read as sliding
+   UNDER it (the long-list scroll-shadow, house style). */
+.sr-table-box {
+  border-color: color-mix(in oklab, var(--border) 75%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.dark .sr-table-box {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.32);
+}
+.sr-th {
+  box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--border) 85%, transparent);
+}
+.dark .sr-th {
+  box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--border) 95%, transparent);
+}
+
+/* rows: zebra for the 9-column scan + 150ms hover tint (round 17: zebra
+   uses FULL-strength muted — this theme's muted is only ~4 RGB points
+   darker than background, so alpha-mixed stripes were imperceptible;
+   solid muted = the classic readable zebra. Hover darkens toward the
+   foreground so it stays stronger than both stripes. Data rows never
+   lift — elevation belongs to cards, not table lines. Dark row hairlines
+   go full-strength (the utility draws them at /60). */
+.sr-row {
+  transition: background-color 150ms ease;
+}
+.dark .sr-row {
+  border-bottom-color: color-mix(in oklab, var(--border) 85%, transparent);
+}
+.sr-row:nth-child(even) {
+  background: var(--muted);
+}
+.dark .sr-row:nth-child(even) {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+.sr-row:hover {
+  background: color-mix(in oklab, var(--muted) 94%, var(--foreground) 6%);
+}
+.dark .sr-row:hover {
+  background: color-mix(in oklab, var(--muted) 75%, transparent);
+}
+
+/* ---- 13-b · health — stat strip: hairline + elevation + cell hover ----- */
+.hr-stats {
+  border-color: color-mix(in oklab, var(--border) 75%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.dark .hr-stats {
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.hr-stats > div {
+  transition: background-color 150ms ease;
+}
+.hr-stats > div:hover {
+  background: color-mix(in oklab, var(--muted) 42%, transparent);
+}
+.dark .hr-stats > div:hover {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+
+/* ---- 13-b · health — issue glyph tiles: hairline inset rings ----------- */
+/* The 6×6 severity glyph tiles get the chip treatment: amber whisper
+   ring for warnings, neutral hairline for info. (--info rule sits after
+   the base rule so it wins the cascade for info rows.) */
+.hr-glyph {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #d97706 22%, transparent);
+}
+.dark .hr-glyph {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #f59e0b 26%, transparent);
+}
+.hr-glyph--info {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 70%, transparent);
+}
+.dark .hr-glyph--info {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 95%, transparent);
+}
+
+/* ---- 13-b · health — issue action affordance ----------------------------- */
+/* Ghost "Inspect / View in library / …" buttons warm to the accent on
+   hover so the fix-it affordance is scannable at a glance. */
+.hr-action:hover {
+  color: #b45309;
+}
+.dark .hr-action:hover {
+  color: #fbbf24;
+}
+
+/* ---- 13-b · shortcuts — group lists + keycap hovers --------------------- */
+/* Group containers get the resting shadow whisper; hovering a shortcut
+   row lifts its keycaps — the footer's kbd hover language, scaled to
+   list size. */
+.sc-list {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.dark .sc-list {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.sc-row .kbd-chip {
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.sc-row:hover .kbd-chip {
+  transform: translateY(-0.5px);
+  border-color: color-mix(in oklab, var(--muted-foreground) 42%, var(--border));
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.08);
+}
+.dark .sc-row:hover .kbd-chip {
+  border-color: color-mix(in oklab, var(--muted-foreground) 55%, var(--border));
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.4);
+}
+
+/* ---- 13-b · AI settings — provider cards: radio joins the register ------- */
+/* The checked radio dot + halo go amber to match the card's amber
+   selected state (shadcn's neutral primary read as a mismatch), and
+   the whole card gets a keyboard focus-within ring that keeps its
+   elevation (the .studio-lift transition carries it in). */
+.ai-provider-card:focus-within {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--ring) 45%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.06);
+}
+.dark .ai-provider-card:focus-within {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--ring) 55%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.3);
+}
+.ai-provider-card [role="radio"][data-state="checked"] {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #d97706 12%, transparent);
+}
+.ai-provider-card [role="radio"][data-state="checked"] svg {
+  fill: #b45309;
+}
+.dark .ai-provider-card [role="radio"][data-state="checked"] {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #f59e0b 18%, transparent);
+}
+.dark .ai-provider-card [role="radio"][data-state="checked"] svg {
+  fill: #fbbf24;
+}
+
+/* ---- 13-b · catalog — stat boxes join the elevation language ------------ */
+.cat-stats > div {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.dark .cat-stats > div {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/* ---- 13-b · reduced motion — kill every new transform ------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .sc-row:hover .kbd-chip {
+    transform: none;
+  }
+  .sc-row .kbd-chip {
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+}
+
+/* ==================================================================== */
+/* Task 14-b — deep detail pass: tag manager · category-AI · duplicate   */
+/* import (3-way) · icon inspector · command palette depth                */
+/* ==================================================================== */
+/* The final un-polished surfaces join the 8-b–13-b chrome language.    */
+/* Unlayered rules appended at EOF only — later cascade position wins   */
+/* over earlier sections AND Tailwind's layered utilities. Hairlines    */
+/* light /60–75, dark full-strength. 150–180ms ease. Amber-only accent  */
+/* (#b45309 light / #f59e0b dark); red reserved for destructive hovers  */
+/* (the register properties-panel/overview already established);        */
+/* emerald unused here. Every time-based transform is reduced-motion    */
+/* guarded. Zero existing rules modified.                                */
+/* ==================================================================== */
+
+/* ---- 14-b · shared premium CTA — the export-button language, small --- */
+/* Used by the duplicate-import "Add Duplicates" confirm and the AI
+   suggestion "Apply" action: vertical foreground micro-gradient, a
+   layered shadow with an inset top light edge, hover lift + brightness,
+   active press. The focus ring survives via outline, never shadow. */
+.studio-cta {
+  background-color: var(--foreground);
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--foreground) 94%, var(--background)),
+    var(--foreground)
+  );
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.16),
+    0 0 0 1px rgb(0 0 0 / 0.04),
+    inset 0 1px 0 rgb(255 255 255 / 0.14);
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    filter 150ms ease;
+}
+.dark .studio-cta {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.5),
+    0 0 0 1px rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+.studio-cta:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-0.5px);
+  box-shadow:
+    0 4px 12px -3px rgb(0 0 0 / 0.26),
+    0 0 0 1px rgb(0 0 0 / 0.05),
+    inset 0 1px 0 rgb(255 255 255 / 0.14);
+}
+.dark .studio-cta:hover:not(:disabled) {
+  box-shadow:
+    0 4px 14px -3px rgb(0 0 0 / 0.6),
+    0 0 0 1px rgb(0 0 0 / 0.25),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+.studio-cta:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.14),
+    inset 0 1px 2px rgb(0 0 0 / 0.18);
+}
+
+/* ---- 14-b · duplicate import — the first dialog a new user hits ------ */
+/* Three visibly distinct outcomes: Add = premium CTA, Skip = hairline
+   outline with a foreground hover shift, Cancel = quiet ghost escape
+   hatch. The shell joins the house language (p-0, hairline header,
+   tinted footer). */
+.dup-cancel {
+  border-color: transparent;
+  background: transparent;
+  color: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+.dup-cancel:hover {
+  border-color: transparent;
+  background: color-mix(in oklab, var(--muted) 62%, transparent);
+  color: var(--foreground);
+}
+.dark .dup-cancel:hover {
+  background: color-mix(in oklab, var(--muted) 70%, transparent);
+}
+.dup-skip {
+  border-color: color-mix(in oklab, var(--border) 75%, transparent);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.dark .dup-skip {
+  border-color: var(--border);
+}
+.dup-skip:hover {
+  border-color: color-mix(in oklab, var(--foreground) 24%, var(--border));
+}
+
+/* ---- 14-b · tag manager — counts, bulk bar, destructive whispers ------ */
+/* Row icon-count becomes the hairline mono pill (sidebar tab-count
+   language); the bulk bar gets the inner light edge + full dark
+   hairline; Merge…/Delete get amber/red hover whispers; the per-row
+   trash hover turns red (the destructive-icon register overview and
+   properties-panel already use). */
+.tm-row-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.28rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--muted-foreground) 78%, var(--foreground));
+}
+.dark .tm-row-count {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 26%, transparent);
+}
+.tm-bulk-bar {
+  border-bottom-color: color-mix(in oklab, var(--border) 75%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45);
+}
+.dark .tm-bulk-bar {
+  border-bottom-color: var(--border);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+.tm-bulk-bar--amber {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45);
+}
+.dark .tm-bulk-bar--amber {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+.tm-bulk-btn {
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.tm-bulk-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+}
+.dark .tm-bulk-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #f59e0b 44%, var(--border));
+  background: color-mix(in oklab, #f59e0b 7%, transparent);
+}
+.tm-bulk-btn--danger:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #dc2626 40%, var(--border));
+  background: color-mix(in oklab, #dc2626 5%, transparent);
+  color: #b91c1c;
+}
+.dark .tm-bulk-btn--danger:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #f87171 46%, var(--border));
+  background: color-mix(in oklab, #f87171 8%, transparent);
+  color: #f87171;
+}
+.tm-danger:hover {
+  color: #dc2626;
+}
+.dark .tm-danger:hover {
+  color: #f87171;
+}
+
+/* ---- 14-b · icon inspector — position chip, meta rows ----------------- */
+/* The stepper position becomes the ws-zoom-readout hairline chip; the
+   source dl keeps its hairline container (light /65, dark full) and
+   rows gain a quiet 150ms hover tint — a data surface you can sweep. */
+.insp-pos {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+  padding-block: 0.0625rem;
+  border-radius: 999px;
+}
+.dark .insp-pos {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+}
+.insp-meta {
+  border-color: color-mix(in oklab, var(--border) 65%, transparent);
+}
+.dark .insp-meta {
+  border-color: var(--border);
+}
+.insp-meta > div {
+  transition: background-color 150ms ease;
+  border-radius: 0.25rem;
+}
+.insp-meta > div:hover {
+  background: color-mix(in oklab, var(--muted) 42%, transparent);
+}
+
+/* ---- 14-b · command palette — search focus, groups, icon tiles ------- */
+/* Focus in the search field warms its underline + glyph amber; groups
+   separate with a hairline divider and their counts become hairline
+   mono chips; row icon tiles get an inset hairline ring (amber when
+   selected); the icon-preview thumbs get a faint stage + amber whisper
+   on the selected row. */
+.palette-search {
+  border-bottom-color: color-mix(in oklab, var(--border) 70%, transparent);
+  transition: border-color 160ms ease;
+}
+.dark .palette-search {
+  border-bottom-color: var(--border);
+}
+.palette-search:focus-within {
+  border-bottom-color: color-mix(in oklab, #d97706 55%, var(--border));
+}
+.dark .palette-search:focus-within {
+  border-bottom-color: color-mix(in oklab, #f59e0b 60%, var(--border));
+}
+.palette-search-ico {
+  transition: color 160ms ease;
+}
+.palette-search:focus-within .palette-search-ico {
+  color: #b45309;
+}
+.dark .palette-search:focus-within .palette-search-ico {
+  color: #fbbf24;
+}
+.palette-group + .palette-group {
+  margin-top: 0.375rem;
+  border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  padding-top: 0.375rem;
+}
+.dark .palette-group + .palette-group {
+  border-top-color: var(--border);
+}
+.palette-group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.0625rem;
+  height: 1.0625rem;
+  padding: 0 0.28rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--muted-foreground) 75%, var(--foreground));
+}
+.dark .palette-group-count {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 26%, transparent);
+}
+.palette-ico {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 60%, transparent);
+}
+.dark .palette-ico {
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.palette-row[aria-selected="true"] .palette-ico {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #d97706 35%, transparent);
+}
+.dark .palette-row[aria-selected="true"] .palette-ico {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #f59e0b 40%, transparent);
+}
+.palette-thumb {
+  background: color-mix(in oklab, var(--muted) 26%, var(--background));
+}
+.palette-row[aria-selected="true"] .palette-thumb {
+  border-color: color-mix(in oklab, #d97706 40%, transparent);
+}
+.dark .palette-row[aria-selected="true"] .palette-thumb {
+  border-color: color-mix(in oklab, #f59e0b 45%, transparent);
+}
+.palette-empty {
+  animation: palette-empty-in 180ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+@keyframes palette-empty-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- 14-b · scroll fade — scroll-linked top shadow (Chromium) -------- */
+/* A gradient strip pinned to the scrollport top that fades in over the
+   first 72px of scrolling (scroll-driven animations; browsers without
+   support keep it at opacity 0 — a graceful no-op). Applied to the
+   palette results, the tag-manager list and the inspector column. */
+.palette-list-wrap,
+.tm-list-wrap,
+.insp-list-wrap {
+  position: relative;
+}
+.palette-list-wrap {
+  timeline-scope: --pal-st;
+}
+.tm-list-wrap {
+  timeline-scope: --tm-st;
+}
+.insp-list-wrap {
+  timeline-scope: --insp-st;
+}
+.palette-scroll {
+  scroll-timeline: --pal-st block;
+}
+.tm-scroll {
+  scroll-timeline: --tm-st block;
+}
+.insp-scroll {
+  scroll-timeline: --insp-st block;
+}
+.palette-scroll-fade,
+.tm-scroll-fade,
+.insp-scroll-fade {
+  position: absolute;
+  top: 0;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 18px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.1), transparent);
+  opacity: 0;
+  animation-name: studio-scroll-in;
+  animation-duration: auto;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-range: 0 72px;
+}
+.palette-scroll-fade {
+  animation-timeline: --pal-st;
+}
+.tm-scroll-fade {
+  animation-timeline: --tm-st;
+}
+.insp-scroll-fade {
+  animation-timeline: --insp-st;
+}
+.dark .palette-scroll-fade,
+.dark .tm-scroll-fade,
+.dark .insp-scroll-fade {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.3), transparent);
+}
+@keyframes studio-scroll-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- 14-b · category-AI — suggestion card + apply actions ------------ */
+/* The suggestion card arrives with a quiet amber-whisper border, a
+   resting shadow and a 200ms rise; the confidence pill joins the warn
+   chip register; Apply becomes the premium CTA; alternatives become
+   hairline quick-pick chips with an amber hover; the theme bar gets an
+   inset hairline so the segments read as one track; the dismiss button
+   finally gets a keyboard focus ring. */
+.ai-card {
+  border-color: color-mix(in oklab, #d97706 22%, var(--border));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  animation: ai-card-in 200ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.dark .ai-card {
+  border-color: color-mix(in oklab, #f59e0b 26%, var(--border));
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
+}
+@keyframes ai-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ai-theme-track {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+.ai-alt {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.dark .ai-alt {
+  border-color: var(--border);
+}
+.ai-alt:hover {
+  border-color: color-mix(in oklab, #d97706 38%, var(--border));
+  background: color-mix(in oklab, #d97706 5%, transparent);
+  color: var(--foreground);
+}
+.dark .ai-alt:hover {
+  border-color: color-mix(in oklab, #f59e0b 44%, var(--border));
+  background: color-mix(in oklab, #f59e0b 7%, transparent);
+}
+.ai-dismiss:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* ---- 14-b · reduced motion — kill every new time-based transform ----- */
+@media (prefers-reduced-motion: reduce) {
+  .studio-cta:hover:not(:disabled),
+  .studio-cta:active:not(:disabled) {
+    transform: none;
+  }
+  .palette-empty,
+  .ai-card {
+    animation: none;
+  }
+}
+
+
+/* ================================================================== */
+/* Task 14-c — duplicate-import artwork previews                        */
+/*                                                                    */
+/* Round 14-c: the ask dialog's rows now show the actual glyph that    */
+/* would be added (content-identical to the library copy) — the same   */
+/* muted-stage + hairline inset-ring language as the similarity tile  */
+/* art, sized to the 24px row thumbnail.                               */
+/* ================================================================== */
+
+.dup-preview {
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 55%, transparent);
+}
+.dark .dup-preview {
+  background: color-mix(in oklab, var(--muted) 26%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--border) 75%, transparent);
+}
+/* 14c converge */
+
+
+/* ================================================================== */
+/* Task 15-e — round-15 surface detail: inspector metadata editor ·    */
+/* similarity per-group quick consolidate · palette title demotion     */
+/*                                                                    */
+/* The round-15 feature surfaces join the 8-b–14-b chrome language.    */
+/* Unlayered rules appended at EOF only — later cascade position wins  */
+/* over earlier sections AND Tailwind's layered utilities. Hairlines   */
+/* light /60–75, dark full-strength. 150–180ms ease. Amber-only accent */
+/* (#b45309 light / #f59e0b dark); emerald stays the keeper/confirm   */
+/* register (consolidate). Every new shadow has a dark variant; the   */
+/* one new transform is reduced-motion guarded. Zero existing rules   */
+/* modified.                                                          */
+/* ================================================================== */
+
+/* ---- 15-e · inspector — the metadata editor as ONE editing surface -- */
+/* The title + description pair sit inside an insp-meta-style bordered
+   box: flush, hairline-divided fields (the dl language at editing
+   weight — no nested field borders, the box owns the chrome), a
+   resting shadow whisper, and a :focus-within state that warms the
+   whole surface to the amber accent with a soft halo. The Heading2
+   glyph warms with it. */
+.insp-meta-fields {
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--muted) 22%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.dark .insp-meta-fields {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 26%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.28);
+}
+/* hover handoff — unfocused only; the focus rule further below wins by
+   source order */
+.insp-meta-fields:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 26%, var(--border));
+}
+.dark .insp-meta-fields:hover {
+  border-color: color-mix(in oklab, var(--muted-foreground) 42%, var(--border));
+}
+/* flush fields: no own borders/shadows/focus-rings — the box owns the
+   chrome; the title/description split is a hairline divider (the
+   insp-meta divide-y language, edge to edge) */
+.insp-meta-fields input,
+.insp-meta-fields textarea {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.insp-meta-fields > textarea {
+  border-top-color: color-mix(in oklab, var(--border) 55%, transparent);
+}
+.dark .insp-meta-fields > textarea {
+  border-top-color: color-mix(in oklab, var(--border) 80%, transparent);
+}
+.insp-meta-glyph {
+  transition: color 150ms ease;
+}
+/* dirty-state affordances (CSS-only: the revert button exists exactly
+   while drafts differ from the store — :has() keys off it):
+   · the "Unsaved — …" status hint warms amber
+   · the field pair carries a resting amber border whisper
+   · focus-within still wins over the dirty border (same specificity,
+     later in the file) and warms the whole box + glyph to the accent */
+.insp-meta-body:has(.insp-meta-reset) .hint-text {
+  color: color-mix(in oklab, #b45309 88%, var(--foreground));
+}
+.dark .insp-meta-body:has(.insp-meta-reset) .hint-text {
+  color: #fcd34d;
+}
+.insp-meta-body:has(.insp-meta-reset) .insp-meta-fields {
+  border-color: color-mix(in oklab, #d97706 30%, var(--border));
+}
+.dark .insp-meta-body:has(.insp-meta-reset) .insp-meta-fields {
+  border-color: color-mix(in oklab, #f59e0b 34%, var(--border));
+}
+.insp-meta-body .insp-meta-fields:focus-within {
+  border-color: color-mix(in oklab, #d97706 50%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, #d97706 10%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.05);
+}
+.dark .insp-meta-body .insp-meta-fields:focus-within {
+  border-color: color-mix(in oklab, #f59e0b 55%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, #f59e0b 14%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.35);
+}
+.insp-meta-body .insp-meta-fields:focus-within .insp-meta-glyph {
+  color: #b45309;
+}
+.dark .insp-meta-body .insp-meta-fields:focus-within .insp-meta-glyph {
+  color: #fbbf24;
+}
+
+/* ---- 15-e · inspector — Save warms to the accent exactly when dirty -- */
+/* The outline Save button is enabled exactly while the drafts differ —
+   that enabled state takes the amber accent (border whisper + tint +
+   #b45309 text, deepening on hover); disabled stays quiet. The keyboard
+   ring is re-declared over the custom shadow. */
+.insp-meta-save:not(:disabled) {
+  border-color: color-mix(in oklab, #d97706 42%, var(--border));
+  background: color-mix(in oklab, #d97706 7%, transparent);
+  color: #b45309;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.insp-meta-save:not(:disabled):hover {
+  border-color: color-mix(in oklab, #d97706 58%, var(--border));
+  background: color-mix(in oklab, #d97706 11%, transparent);
+  box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.12);
+}
+.dark .insp-meta-save:not(:disabled) {
+  border-color: color-mix(in oklab, #f59e0b 42%, var(--border));
+  background: color-mix(in oklab, #f59e0b 11%, transparent);
+  color: #fcd34d;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.dark .insp-meta-save:not(:disabled):hover {
+  border-color: color-mix(in oklab, #f59e0b 56%, var(--border));
+  background: color-mix(in oklab, #f59e0b 15%, transparent);
+  box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.4);
+}
+.insp-meta-save:focus-visible {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--ring) 100%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.05);
+}
+.dark .insp-meta-save:focus-visible {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--ring) 100%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/* ---- 15-e · similarity — per-group quick Consolidate ---------------- */
+/* Resting: a quiet ghost whose hover warms to the EMERALD keeper/confirm
+   register (unlayered, so the affordance never depends on the (hover)
+   media — the sim-filter technique). Armed: the bulk strip's mini
+   sibling — amber caution wash + emerald confirm carrying the
+   sim-keep-btn glow whisper. */
+.sim-quick-btn {
+  border: 1px solid transparent;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.sim-quick-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #059669 35%, transparent);
+  background: color-mix(in oklab, #059669 8%, transparent);
+  color: #047857;
+}
+.dark .sim-quick-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, #34d399 40%, transparent);
+  background: color-mix(in oklab, #34d399 10%, transparent);
+  color: #6ee7b7;
+}
+
+/* armed cluster — the bulk amber strip language at mini scale */
+.sim-quick-armed {
+  border: 1px solid color-mix(in oklab, #d97706 45%, transparent);
+  background: color-mix(in oklab, #d97706 8%, transparent);
+  border-radius: 0.5rem;
+  padding: 2px 6px 2px 9px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  animation: sim-quick-in 150ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.dark .sim-quick-armed {
+  border-color: color-mix(in oklab, #f59e0b 40%, transparent);
+  background: color-mix(in oklab, #f59e0b 10%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+@keyframes sim-quick-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the emerald confirm — keeper glow whisper (sim-keep-btn language);
+   keyboard ring re-declared over the custom glow */
+.sim-quick-confirm {
+  box-shadow: 0 2px 8px -4px color-mix(in oklab, #059669 55%, transparent);
+  transition: box-shadow 150ms ease;
+}
+.sim-quick-confirm:hover {
+  box-shadow: 0 3px 10px -4px color-mix(in oklab, #059669 60%, transparent);
+}
+.dark .sim-quick-confirm {
+  box-shadow: 0 2px 8px -4px color-mix(in oklab, #34d399 38%, transparent);
+}
+.dark .sim-quick-confirm:hover {
+  box-shadow: 0 3px 10px -4px color-mix(in oklab, #34d399 44%, transparent);
+}
+.sim-quick-confirm:focus-visible {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--ring) 100%, transparent),
+    0 2px 8px -4px color-mix(in oklab, #059669 55%, transparent);
+}
+
+/* ---- 15-e · palette — the demoted file-name token -------------------- */
+/* When an icon has a title, the file name drops to the sub-line as a
+   mono token: a touch more present than the assignment/tags hints (it
+   identifies the artifact on disk), still quiet, 10px. */
+.palette-name {
+  font-size: 10px;
+  color: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
+}
+.dark .palette-name {
+  color: color-mix(in oklab, var(--muted-foreground) 65%, var(--foreground));
+}
+
+/* ---- 15-e · reduced motion — kill the one new transform ------------- */
+@media (prefers-reduced-motion: reduce) {
+  .sim-quick-armed {
+    animation: none;
+  }
+}
+/* 15e converge (cycle 2) */
+
+/* ====================================================================== */
+/* TEMPLATE BUILDER (Phase 1) — appended, additive only. Unlayered so    */
+/* these rules beat @layer utilities when they must (pan-mode pointer    */
+/* inertness), mirroring the studio canvas-pan pattern.                  */
+/* ====================================================================== */
+
+/* dotted editor-canvas backdrop — subtle, zoom-independent (screen px) */
+.builder-viewport {
+  background-color: var(--background);
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--border) 85%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Space+drag professional panning (same contract as the studio canvas) */
+.builder-viewport[data-pan="armed"] {
+  cursor: grab;
+}
+.builder-viewport[data-pan="dragging"] {
+  cursor: grabbing;
+}
+.builder-viewport[data-pan="armed"] *,
+.builder-viewport[data-pan="dragging"] * {
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+/* the artboard reads as a physical sheet on the dotted desk */
+.builder-artboard-frame {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--border) 90%, transparent),
+    0 16px 48px -16px rgb(0 0 0 / 0.28),
+    0 4px 12px -6px rgb(0 0 0 / 0.18);
+  border-radius: 1px;
+}
+
+/* layers rows — 36px touch-friendly strip */
+.builder-layers > div {
+  min-height: 36px;
+}
+
+/* align tool buttons — crisp hairline tiles */
+.builder-align-btn {
+  min-width: 0;
+}
+.builder-align-btn:active {
+  transform: translateY(0.5px);
+}
+
+/* reduced motion: no transform feedback pulse */
+@media (prefers-reduced-motion: reduce) {
+  .builder-align-btn:active {
+    transform: none;
+  }
+}
