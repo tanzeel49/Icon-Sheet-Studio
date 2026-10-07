@@ -943,24 +943,6 @@ export function StudioApp() {
         <span className="min-w-0 shrink truncate inline-flex items-center gap-2">
           <span className="footer-brand-dot" aria-hidden />
           Icon Sheet Studio
-          <a
-            href="/api/download-source"
-            download
-            onClick={(e) => {
-              // Plain left-click / keyboard activation only — ctrl/cmd/shift-click
-              // keeps the browser default (new tab / save-link-as), which hits the
-              // same no-store endpoint and is equally fresh.
-              if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-              e.preventDefault();
-              triggerFreshSourceDownload();
-            }}
-            className="hidden sm:inline-flex items-center gap-1 rounded px-1 py-0.5 text-muted-foreground/80 hover:text-foreground transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Download the full project source as a zip archive to run locally on your computer"
-            title="Download the full project source — unzip, npm install, npm run dev"
-          >
-            <DownloadIcon className="size-3" aria-hidden="true" />
-            <span className="hidden md:inline underline underline-offset-2 decoration-border hover:decoration-muted-foreground">Download project (.zip)</span>
-          </a>
         </span>
         <FooterContext />
         <span className="hidden sm:flex items-center gap-2">
