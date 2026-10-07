@@ -1,6 +1,6 @@
 [package]
 name = "icon-sheet-studio"
-version = "0.2.1"
+version = "0.2.2"
 description = "Icon Sheet Studio Desktop App"
 authors = ["you"]
 license = ""
