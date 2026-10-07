@@ -306,22 +306,17 @@ function slugifyScope(label: string): string {
   );
 }
 
+import { saveFileNative } from "./desktop";
+
 export function downloadCatalog(catalog: LibraryCatalog, format: CatalogFormat): string {
   const mime = format === "json" ? "application/json" : "text/csv";
   const blob = new Blob([format === "json" ? catalogToJson(catalog) : catalogToCsv(catalog)], {
     type: `${mime};charset=utf-8`,
   });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
   const filename = buildCatalogFilename(
     format,
     catalog.scope?.label ? slugifyScope(catalog.scope.label) : undefined,
   );
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  saveFileNative(blob, filename).catch((err) => console.error("Export failed:", err));
   return filename;
 }

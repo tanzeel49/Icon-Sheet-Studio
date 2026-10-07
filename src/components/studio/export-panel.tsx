@@ -57,16 +57,13 @@ type Scale = "1" | "2" | "3";
 /* stripBackgroundRect (transparent export) is imported from export.ts —
  * the duplicated local regex copy was removed in review round 7. */
 
-/** Blob download (same pattern as the private helper in export.ts). */
+import { saveFileNative } from "@/lib/studio/desktop";
+
+/** Blob download using the desktop abstraction layer. */
 function triggerDownload(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  saveFileNative(blob, filename).catch((err) => {
+    console.error("Export failed:", err);
+  });
 }
 
 function scopeSheets(

@@ -29,6 +29,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { JSX } from "react";
 import { toast } from "sonner";
+import { saveFileNative } from "@/lib/studio/desktop";
 import {
   AlignLeft,
   ArrowRightLeft,
@@ -398,15 +399,10 @@ function InspectorBody({
      * file is accessible out of the box */
     const out = embedSvgMetadata(entry.svg, entry.title, entry.description);
     const blob = new Blob([out], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = entry.fileName.endsWith(".svg") ? entry.fileName : `${entry.fileName}.svg`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    toast.success(`Downloaded ${a.download}`);
+    const filename = entry.fileName.endsWith(".svg") ? entry.fileName : `${entry.fileName}.svg`;
+    saveFileNative(blob, filename)
+      .then(() => toast.success(`Downloaded ${filename}`))
+      .catch((err) => console.error("Download failed:", err));
   }
 
   async function copySvg(): Promise<void> {
