@@ -6,7 +6,7 @@
  * theme, export.
  */
 
-import { Undo2, Redo2, Download, Sun, Moon, Monitor, Grid3x3, Keyboard, Search, HeartPulse, HardDriveDownload, PencilRuler, Library } from "lucide-react";
+import { Undo2, Redo2, Download, Sun, Moon, Monitor, Grid3x3, Keyboard, Search, HeartPulse, HardDriveDownload, PencilRuler, Library, RefreshCcw } from "lucide-react";
 import { useSyncExternalStore, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -78,9 +78,10 @@ function HealthPill() {
   );
 }
 
-export function Header({ onExport, onHelp, onToggleLeft, onToggleRight, onOpenPalette, onOpenBuilder, onOpenLibrary }: {
+export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggleRight, onOpenPalette, onOpenBuilder, onOpenLibrary }: {
   onExport: () => void;
   onHelp: () => void;
+  onCheckUpdate: () => void;
   onToggleLeft: () => void;
   onToggleRight: () => void;
   onOpenPalette: () => void;
@@ -203,6 +204,15 @@ export function Header({ onExport, onHelp, onToggleLeft, onToggleRight, onOpenPa
               </Button>
             </TooltipTrigger>
             <TooltipContent>Keyboard shortcuts <span className="text-muted-foreground">?</span></TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onCheckUpdate} aria-label="Check for updates">
+                <RefreshCcw className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Check for updates</TooltipContent>
           </Tooltip>
 
           <Tooltip>

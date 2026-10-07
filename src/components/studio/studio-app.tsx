@@ -49,6 +49,7 @@ import { DuplicateImportDialog } from "./duplicate-import-dialog";
 import { UploadDropzone } from "./icon-library";
 import { TemplateBuilder } from "@/components/builder/template-builder";
 import { TemplateLibraryDialog } from "@/components/builder/template-library-dialog";
+import { UpdaterDialog, triggerUpdateCheck } from "./updater-dialog";
 import { useBuilderStore } from "@/lib/builder/store";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
@@ -885,7 +886,7 @@ export function StudioApp() {
       onDragCancel={handleDragCancel}
     >
     <div className="h-screen flex flex-col bg-background text-foreground overflow-hidden">
-      <Header onExport={openExport} onHelp={openHelp} onToggleLeft={() => setLeftOpen(true)} onToggleRight={() => setRightOpen(true)} onOpenPalette={openPalette} onOpenBuilder={openBuilder} onOpenLibrary={() => setLibraryOpen(true)} />
+      <Header onExport={openExport} onHelp={openHelp} onCheckUpdate={triggerUpdateCheck} onToggleLeft={() => setLeftOpen(true)} onToggleRight={() => setRightOpen(true)} onOpenPalette={openPalette} onOpenBuilder={openBuilder} onOpenLibrary={() => setLibraryOpen(true)} />
 
       <div className="flex-1 flex min-h-0">
         {/* left sidebar — desktop. Responsive widths by viewport class:
@@ -1023,6 +1024,7 @@ export function StudioApp() {
       <StrokeReportDialog />
       <SimilarityDialog open={similarityDialogOpen} onOpenChange={(o) => setSimilarityDialogOpen(o)} />
       <AISettingsDialog />
+      <UpdaterDialog />
 
       {/* Template Builder (Phase 1+2) — additive full-screen overlay. The
           studio stays mounted underneath (state, sheets, persistence all

@@ -1,13 +1,21 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Icon Sheet Studio",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "identifier": "com.iconsheetstudio.desktop",
   "build": {
     "frontendDist": "../.next/standalone/Icon Sheet Studio/public",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": ""
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/tanzeel49/Icon-Sheet-Studio/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEI1MDVEQ0EzN0FDRjI2NDYKUldSR0pzOTZvOXdGdFduNzkvSU1TWDNoaTVZN2pmS3FSaEJ4aTl6bVZQVlhLZHJEQ0diU29wd3AK"
+    }
   },
   "app": {
     "windows": [
