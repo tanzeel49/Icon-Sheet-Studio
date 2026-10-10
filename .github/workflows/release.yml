@@ -55,32 +55,37 @@ jobs:
           args: ${{ matrix.args }}
 
       - name: Upload Updater Artifacts
-        shell: pwsh
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $version = "${{ github.ref_name }}".TrimStart('v')
-          $tag = "${{ github.ref_name }}"
-          $nsisZip = Get-Item "src-tauri/target/release/bundle/nsis/*.nsis.zip" | Select-Object -First 1
-          $nsisSig = Get-Item "src-tauri/target/release/bundle/nsis/*.nsis.zip.sig" | Select-Object -First 1
-          
-          if ($nsisZip -and $nsisSig) {
-            $sigContent = Get-Content $nsisSig.FullName -Raw
-            $json = @{
-              version = "v$version"
-              notes = "Update available"
-              pub_date = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
-              platforms = @{
-                "windows-x86_64" = @{
-                  signature = $sigContent
-                  url = "https://github.com/tanzeel49/Icon-Sheet-Studio/releases/download/$tag/$($nsisZip.Name)"
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          const cp = require('child_process');
+          const dir = 'src-tauri/target/release/bundle/nsis';
+          const files = fs.readdirSync(dir);
+          const zipFile = files.find(f => f.endsWith('.nsis.zip'));
+          const sigFile = files.find(f => f.endsWith('.nsis.zip.sig'));
+          if (zipFile && sigFile) {
+            const sigContent = fs.readFileSync(path.join(dir, sigFile), 'utf8');
+            const version = '${{ github.ref_name }}'.replace(/^v/, '');
+            const tag = '${{ github.ref_name }}';
+            const latestJson = {
+              version: 'v' + version,
+              notes: 'Update available',
+              pub_date: new Date().toISOString(),
+              platforms: {
+                'windows-x86_64': {
+                  signature: sigContent,
+                  url: 'https://github.com/tanzeel49/Icon-Sheet-Studio/releases/download/' + tag + '/' + encodeURIComponent(zipFile)
                 }
               }
-            } | ConvertTo-Json -Depth 5
-            
-            Set-Content -Path "latest.json" -Value $json
-            
-            gh release upload $tag $nsisZip.FullName $nsisSig.FullName latest.json --clobber
+            };
+            fs.writeFileSync('latest.json', JSON.stringify(latestJson, null, 2));
+            cp.execSync('gh release upload \"' + tag + '\" \"' + path.join(dir, zipFile) + '\" \"' + path.join(dir, sigFile) + '\" \"latest.json\" --clobber', { stdio: 'inherit' });
           } else {
-            Write-Error "Could not find updater zip or sig file."
+            console.error('Updater files not found!');
+            process.exit(1);
           }
+          "
