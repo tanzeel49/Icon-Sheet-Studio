@@ -90,29 +90,30 @@ pub fn run() {
           return Ok(());
       }
 
-      // Wait for the server to be ready by polling the TCP port
-      let mut attempts = 0;
-      loop {
-        if std::net::TcpStream::connect(format!("127.0.0.1:{}", port)).is_ok() {
-          break;
-        }
-        if attempts > 100 {
-          app.dialog().message("Failed to connect to Next.js standalone server after 5 seconds.").show(|_| {});
-          break;
-        }
-        std::thread::sleep(std::time::Duration::from_millis(50));
-        attempts += 1;
-      }
-
-      // Update the main window URL
-      if let Some(main_window) = app.get_webview_window("main") {
-          let url: Url = format!("http://127.0.0.1:{}", port).parse().unwrap();
-          if let Err(e) = main_window.navigate(url) {
-              app.dialog().message(format!("Failed to navigate: {}", e)).show(|_| {});
+      let app_handle = app.handle().clone();
+      tauri::async_runtime::spawn(async move {
+          // Wait for the server to be ready by polling the TCP port
+          let mut attempts = 0;
+          loop {
+            if std::net::TcpStream::connect(format!("127.0.0.1:{}", port)).is_ok() {
+              break;
+            }
+            if attempts > 100 {
+              println!("Failed to connect to Next.js standalone server after 5 seconds.");
+              break;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+            attempts += 1;
           }
-      } else {
-          app.dialog().message("No main window found!").show(|_| {});
-      }
+
+          // Update the main window URL
+          if let Some(main_window) = app_handle.get_webview_window("main") {
+              let url: Url = format!("http://127.0.0.1:{}", port).parse().unwrap();
+              if let Err(e) = main_window.navigate(url) {
+                  println!("Failed to navigate: {}", e);
+              }
+          }
+      });
 
       Ok(())
     })
