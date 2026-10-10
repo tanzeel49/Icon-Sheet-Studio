@@ -69,7 +69,11 @@ pub fn run() {
       
       let server_js_path = standalone_path.join("server.js");
 
-      // Spawn the node sidecar
+      if !server_js_path.exists() {
+          app.dialog().message(format!("server.js not found at {:?}", server_js_path)).show(|_| {});
+          return Ok(());
+      }
+
       let sidecar_command = match app.shell().sidecar("node") {
           Ok(cmd) => cmd,
           Err(e) => {
@@ -78,29 +82,63 @@ pub fn run() {
           }
       };
       
-      if let Err(e) = sidecar_command
+      let (mut rx, child) = match sidecar_command
         .args([server_js_path.to_str().unwrap()])
         .env("PORT", port.to_string())
         .env("NODE_ENV", "production")
         .env("HOSTNAME", "127.0.0.1")
-        .current_dir(standalone_path)
+        .current_dir(&standalone_path)
         .spawn()
       {
-          app.dialog().message(format!("Failed to spawn node sidecar: {}", e)).show(|_| {});
-          return Ok(());
-      }
+          Ok(c) => c,
+          Err(e) => {
+              app.dialog().message(format!("Failed to spawn node sidecar: {}", e)).show(|_| {});
+              return Ok(());
+          }
+      };
+
+      // Ensure sidecar is killed when parent exits (in addition to WindowEvent fallback)
+      let child_arc = std::sync::Arc::new(std::sync::Mutex::new(Some(child)));
+      app.manage(child_arc.clone());
+
+      let app_handle_for_rx = app.handle().clone();
+      tauri::async_runtime::spawn(async move {
+          while let Some(event) = rx.recv().await {
+              match event {
+                  tauri_plugin_shell::process::CommandEvent::Stdout(line) => {
+                      println!("Next.js: {}", String::from_utf8_lossy(&line));
+                  }
+                  tauri_plugin_shell::process::CommandEvent::Stderr(line) => {
+                      eprintln!("Next.js Error: {}", String::from_utf8_lossy(&line));
+                  }
+                  tauri_plugin_shell::process::CommandEvent::Error(err) => {
+                      eprintln!("Next.js spawned process error: {}", err);
+                  }
+                  tauri_plugin_shell::process::CommandEvent::Terminated(payload) => {
+                      let code = payload.code.unwrap_or(-1);
+                      eprintln!("Next.js terminated with code: {}", code);
+                      if code != 0 {
+                          app_handle_for_rx.dialog().message(format!("Next.js background server crashed with code {}", code)).show(|_| {});
+                      }
+                  }
+                  _ => {}
+              }
+          }
+      });
 
       let app_handle = app.handle().clone();
       tauri::async_runtime::spawn(async move {
           // Wait for the server to be ready by polling the TCP port
           let mut attempts = 0;
+          let max_attempts = 600; // 30 seconds
+          
           loop {
             if std::net::TcpStream::connect(format!("127.0.0.1:{}", port)).is_ok() {
               break;
             }
-            if attempts > 100 {
-              println!("Failed to connect to Next.js standalone server after 5 seconds.");
-              break;
+            if attempts > max_attempts {
+              app_handle.dialog().message("Failed to connect to Next.js standalone server after 30 seconds. Check console logs for Next.js errors.").show(|_| {});
+              return;
             }
             tokio::time::sleep(std::time::Duration::from_millis(50)).await;
             attempts += 1;
@@ -110,12 +148,25 @@ pub fn run() {
           if let Some(main_window) = app_handle.get_webview_window("main") {
               let url: Url = format!("http://127.0.0.1:{}", port).parse().unwrap();
               if let Err(e) = main_window.navigate(url) {
-                  println!("Failed to navigate: {}", e);
+                  eprintln!("Failed to navigate: {}", e);
               }
           }
       });
 
       Ok(())
+    })
+    .on_window_event(|window, event| {
+        if let tauri::WindowEvent::Destroyed = event {
+            if window.label() == "main" {
+                if let Some(state) = window.try_state::<std::sync::Arc<std::sync::Mutex<Option<tauri_plugin_shell::process::CommandChild>>>>() {
+                    if let Ok(mut child_lock) = state.lock() {
+                        if let Some(child) = child_lock.take() {
+                            let _ = child.kill();
+                        }
+                    }
+                }
+            }
+        }
     })
     .run(tauri::generate_context!())
     .expect("error while building tauri application");

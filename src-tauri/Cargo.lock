@@ -1465,7 +1465,7 @@ dependencies = [
 
 [[package]]
 name = "icon-sheet-studio"
-version = "0.2.1"
+version = "0.2.7"
 dependencies = [
  "log",
  "serde",
@@ -1478,6 +1478,7 @@ dependencies = [
  "tauri-plugin-process",
  "tauri-plugin-shell",
  "tauri-plugin-updater",
+ "tokio",
 ]
 
 [[package]]
