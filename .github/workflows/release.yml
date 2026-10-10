@@ -54,38 +54,4 @@ jobs:
           updaterJsonPreferNsis: true
           args: ${{ matrix.args }}
 
-      - name: Upload Updater Artifacts
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          node -e "
-          const fs = require('fs');
-          const path = require('path');
-          const cp = require('child_process');
-          const dir = 'src-tauri/target/release/bundle/nsis';
-          const files = fs.readdirSync(dir);
-          const zipFile = files.find(f => f.endsWith('.nsis.zip'));
-          const sigFile = files.find(f => f.endsWith('.nsis.zip.sig'));
-          if (zipFile && sigFile) {
-            const sigContent = fs.readFileSync(path.join(dir, sigFile), 'utf8');
-            const version = '${{ github.ref_name }}'.replace(/^v/, '');
-            const tag = '${{ github.ref_name }}';
-            const latestJson = {
-              version: 'v' + version,
-              notes: 'Update available',
-              pub_date: new Date().toISOString(),
-              platforms: {
-                'windows-x86_64': {
-                  signature: sigContent,
-                  url: 'https://github.com/tanzeel49/Icon-Sheet-Studio/releases/download/' + tag + '/' + encodeURIComponent(zipFile)
-                }
-              }
-            };
-            fs.writeFileSync('latest.json', JSON.stringify(latestJson, null, 2));
-            cp.execSync('gh release upload \"' + tag + '\" \"' + path.join(dir, zipFile) + '\" \"' + path.join(dir, sigFile) + '\" \"latest.json\" --clobber', { stdio: 'inherit' });
-          } else {
-            console.error('Updater files not found!');
-            process.exit(1);
-          }
-          "
+
