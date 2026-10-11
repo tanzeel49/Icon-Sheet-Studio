@@ -57,13 +57,11 @@ type Scale = "1" | "2" | "3";
 /* stripBackgroundRect (transparent export) is imported from export.ts —
  * the duplicated local regex copy was removed in review round 7. */
 
-import { saveFileNative } from "@/lib/studio/desktop";
+import { saveFileNative, type SaveResult } from "@/lib/studio/desktop";
 
 /** Blob download using the desktop abstraction layer. */
-function triggerDownload(blob: Blob, filename: string): void {
-  saveFileNative(blob, filename).catch((err) => {
-    console.error("Export failed:", err);
-  });
+async function triggerDownload(blob: Blob, filename: string): Promise<SaveResult> {
+  return await saveFileNative(blob, filename);
 }
 
 function scopeSheets(
@@ -321,6 +319,9 @@ export function ExportDialog({
           { pngScale: Number(safePdfScale), transparent, footer: pdfFooter },
           (report) => setProgress(report) // real progress only — never faked
         );
+        if (result.cancelled) {
+          return;
+        }
         const failed = result.failed + liveSkipped.length;
         const succeeded = result.succeeded;
         const firstError = liveSkipped[0] ?? result.errors[0];
@@ -329,6 +330,7 @@ export function ExportDialog({
           toast.success(
             succeeded === 1 ? "1 sheet exported to PDF" : `${succeeded} sheets exported to one PDF`
           );
+          handleOpenChange(false);
         }
         if (failed > 0) toast.error(`${failed} failed — ${firstError ?? "unknown error"}`);
         return;
@@ -338,25 +340,30 @@ export function ExportDialog({
       if (liveScoped.length === 1 && liveTargets.length === 1) {
         const { sheet, template } = liveTargets[0];
         const filename = buildExportFilename(sheet, 0, format);
+        let saveRes: SaveResult | undefined;
         if (format === "svg") {
           if (transparent) {
             const svg = stripBackgroundRect(buildSheetSvg(sheet, template, liveIcons));
-            triggerDownload(
+            saveRes = await triggerDownload(
               new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
               filename
             );
           } else {
-            exportSheetSvg(sheet, template, liveIcons, 0);
+            saveRes = await exportSheetSvg(sheet, template, liveIcons, 0);
           }
-          toast.success(`Exported ${filename}`);
         } else {
-          await exportSheetPng(sheet, template, liveIcons, 0, {
+          saveRes = await exportSheetPng(sheet, template, liveIcons, 0, {
             scale: Number(safeScale),
             transparent,
           });
-          toast.success(`Exported ${filename}`);
         }
-        handleOpenChange(false); // single exports close the dialog
+
+        if (saveRes?.saved) {
+          toast.success(`Exported ${filename}`);
+          handleOpenChange(false); // single exports close the dialog upon success
+        } else if (!saveRes?.cancelled) {
+          toast.error(`Export failed for ${filename}`);
+        }
         return;
       }
 
@@ -371,11 +378,17 @@ export function ExportDialog({
         { format, pngScale: Number(safeScale), transparent },
         (report) => setProgress(report) // real progress only — never faked
       );
+      if (result.cancelled) {
+        return;
+      }
       const failed = result.failed + liveSkipped.length;
       const succeeded = result.succeeded;
       const firstError = liveSkipped[0] ?? result.errors[0];
       setSummary({ succeeded, failed });
-      if (succeeded > 0) toast.success(`${succeeded} sheets exported`);
+      if (succeeded > 0) {
+        toast.success(`${succeeded} sheets exported`);
+        handleOpenChange(false);
+      }
       if (failed > 0) toast.error(`${failed} failed — ${firstError ?? "unknown error"}`);
     } catch (err) {
       toast.error(`Export failed: ${err instanceof Error ? err.message : String(err)}`);

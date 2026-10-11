@@ -96,16 +96,20 @@ export function CatalogDialog({
     ];
   }, [catalog]);
 
-  function exportNow(): void {
+  async function exportNow(): Promise<void> {
     if (!catalog || catalog.summary.icons === 0) return;
-    const filename = downloadCatalog(catalog, format);
-    toast.success(`Catalog exported — ${filename}`, {
-      description:
-        format === "json"
-          ? "Structured JSON with summary, tags, sheets and per-icon metadata"
-          : "Flat CSV — one row per icon, ready for spreadsheets",
-    });
-    onOpenChange(false);
+    const res = await downloadCatalog(catalog, format);
+    if (res.saved) {
+      toast.success(`Catalog exported — ${res.filename}`, {
+        description:
+          format === "json"
+            ? "Structured JSON with summary, tags, sheets and per-icon metadata"
+            : "Flat CSV — one row per icon, ready for spreadsheets",
+      });
+      onOpenChange(false);
+    } else if (!res.cancelled) {
+      toast.error(`Catalog export failed`);
+    }
   }
 
   const empty = catalog === null || catalog.summary.icons === 0;

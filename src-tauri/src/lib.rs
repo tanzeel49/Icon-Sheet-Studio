@@ -49,6 +49,24 @@ fn find_server_js(resource_dir: &std::path::Path) -> Option<std::path::PathBuf> 
     search_dir(resource_dir, 5)
 }
 
+#[tauri::command]
+async fn write_file_native(path: String, data: Vec<u8>) -> Result<u64, String> {
+    let file_path = std::path::PathBuf::from(&path);
+    if let Some(parent) = file_path.parent() {
+        if !parent.exists() {
+            std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create parent directory: {}", e))?;
+        }
+    }
+    std::fs::write(&file_path, &data).map_err(|e| format!("Failed to write file to '{}': {}", path, e))?;
+
+    let metadata = std::fs::metadata(&file_path).map_err(|e| format!("Failed to verify '{}': {}", path, e))?;
+    let bytes_written = metadata.len();
+    if !data.is_empty() && bytes_written == 0 {
+        return Err(format!("File verification failed: '{}' is 0 bytes", path));
+    }
+    Ok(bytes_written)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -57,6 +75,7 @@ pub fn run() {
     .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_updater::Builder::new().build())
+    .invoke_handler(tauri::generate_handler![write_file_native])
     .setup(|app| {
       if cfg!(debug_assertions) {
         // In development, Next.js is running on devUrl (localhost:3000)

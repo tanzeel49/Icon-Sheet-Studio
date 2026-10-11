@@ -401,8 +401,13 @@ function InspectorBody({
     const blob = new Blob([out], { type: "image/svg+xml" });
     const filename = entry.fileName.endsWith(".svg") ? entry.fileName : `${entry.fileName}.svg`;
     saveFileNative(blob, filename)
-      .then(() => toast.success(`Downloaded ${filename}`))
-      .catch((err) => console.error("Download failed:", err));
+      .then((res) => {
+        if (res.saved) toast.success(`Downloaded ${filename}`);
+      })
+      .catch((err) => {
+        console.error("Download failed:", err);
+        toast.error(`Download failed: ${err instanceof Error ? err.message : String(err)}`);
+      });
   }
 
   async function copySvg(): Promise<void> {

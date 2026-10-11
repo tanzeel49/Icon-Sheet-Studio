@@ -308,7 +308,7 @@ function slugifyScope(label: string): string {
 
 import { saveFileNative } from "./desktop";
 
-export function downloadCatalog(catalog: LibraryCatalog, format: CatalogFormat): string {
+export async function downloadCatalog(catalog: LibraryCatalog, format: CatalogFormat): Promise<import("./desktop").SaveResult & { filename: string }> {
   const mime = format === "json" ? "application/json" : "text/csv";
   const blob = new Blob([format === "json" ? catalogToJson(catalog) : catalogToCsv(catalog)], {
     type: `${mime};charset=utf-8`,
@@ -317,6 +317,6 @@ export function downloadCatalog(catalog: LibraryCatalog, format: CatalogFormat):
     format,
     catalog.scope?.label ? slugifyScope(catalog.scope.label) : undefined,
   );
-  saveFileNative(blob, filename).catch((err) => console.error("Export failed:", err));
-  return filename;
+  const res = await saveFileNative(blob, filename);
+  return { ...res, filename };
 }

@@ -32,19 +32,18 @@ export interface ExportResult {
   succeeded: number;
   failed: number;
   errors: string[];
+  cancelled?: boolean;
 }
 
 /* ------------------------------------------------------------------ */
 /* Download helpers                                                    */
 /* ------------------------------------------------------------------ */
 
-import { saveFileNative } from "./desktop";
+import { saveFileNative, type SaveResult } from "./desktop";
 
-export function triggerDownload(blob: Blob, filename: string) {
+export async function triggerDownload(blob: Blob, filename: string): Promise<SaveResult> {
   // Use the desktop abstraction layer which gracefully falls back to web downloads
-  saveFileNative(blob, filename).catch((err) => {
-    console.error("Export failed:", err);
-  });
+  return await saveFileNative(blob, filename);
 }
 
 /* ------------------------------------------------------------------ */
@@ -56,15 +55,15 @@ export function buildSheetSvg(sheet: Sheet, template: TemplateDef, icons: Record
   return renderSheet(sheet, template, icons, { mode: "export" });
 }
 
-export function exportSheetSvg(
+export async function exportSheetSvg(
   sheet: Sheet,
   template: TemplateDef,
   icons: Record<string, IconEntry>,
   index: number
-): void {
+): Promise<SaveResult> {
   const svg = buildSheetSvg(sheet, template, icons);
   const filename = buildExportFilename(sheet, index, "svg");
-  triggerDownload(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }), filename);
+  return await triggerDownload(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }), filename);
 }
 
 /* ------------------------------------------------------------------ */
@@ -129,11 +128,11 @@ export async function exportSheetPng(
   icons: Record<string, IconEntry>,
   index: number,
   opts: { scale?: number; transparent?: boolean } = {}
-): Promise<void> {
+): Promise<SaveResult> {
   const svg = buildSheetSvg(sheet, template, icons);
   const png = await svgToPngBlob(svg, template.width, template.height, opts.scale ?? 2, opts.transparent ?? false);
   const filename = buildExportFilename(sheet, index, "png");
-  triggerDownload(png, filename);
+  return await triggerDownload(png, filename);
 }
 
 /* ------------------------------------------------------------------ */
@@ -296,11 +295,16 @@ export async function exportSheetsPdf(
 
     if (doc && succeeded > 0) {
       onProgress?.({ current: total, total, label: "Writing PDF…" });
-      if (total === 1 && targets[0]) {
-        // single-sheet PDF keeps the per-sheet filename convention
-        doc.save(buildExportFilename(targets[0].sheet, 0, "pdf"));
-      } else {
-        doc.save(`icon-sheets_${stamp}.pdf`);
+      const pdfFilename = total === 1 && targets[0]
+        ? buildExportFilename(targets[0].sheet, 0, "pdf")
+        : `icon-sheets_${stamp}.pdf`;
+      const pdfBlob = doc.output("blob");
+      const saveRes = await triggerDownload(pdfBlob, pdfFilename);
+      if (saveRes.cancelled) {
+        return { ok: false, succeeded: 0, failed: 0, errors: [], cancelled: true };
+      }
+      if (!saveRes.saved) {
+        errors.push("Failed to write PDF to selected destination");
       }
     }
   } catch (err) {
@@ -364,7 +368,13 @@ export async function exportBatch(
     onProgress?.({ current: total, total, label: "Packaging archive…" });
     const zipBlob = await zip.generateAsync({ type: "blob" });
     const stamp = new Date().toISOString().slice(0, 10);
-    triggerDownload(zipBlob, `icon-sheets_${stamp}.zip`);
+    const saveRes = await triggerDownload(zipBlob, `icon-sheets_${stamp}.zip`);
+    if (saveRes.cancelled) {
+      return { ok: false, succeeded: 0, failed: 0, errors: [], cancelled: true };
+    }
+    if (!saveRes.saved) {
+      errors.push("Failed to write ZIP archive to selected destination");
+    }
   }
 
   return { ok: errors.length === 0, succeeded, failed: errors.length, errors };
