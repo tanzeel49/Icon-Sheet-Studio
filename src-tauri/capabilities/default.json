@@ -5,12 +5,20 @@
   "windows": [
     "main"
   ],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:*",
+      "http://localhost:*"
+    ]
+  },
   "permissions": [
     "core:default",
     "dialog:default",
     "fs:default",
     "shell:default",
     "shell:allow-execute",
-    "shell:allow-spawn"
+    "shell:allow-spawn",
+    "updater:default",
+    "process:default"
   ]
 }

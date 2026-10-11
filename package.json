@@ -1,10 +1,10 @@
 {
   "name": "nextjs_tailwind_shadcn_ts",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "NEXT_TELEMETRY_DISABLED=1 next build && node -e \"const fs = require('fs'); fs.cpSync('.next/static', '.next/standalone/Icon Sheet Studio/.next/static', {recursive: true}); fs.cpSync('public', '.next/standalone/Icon Sheet Studio/public', {recursive: true}); const p = '.next/standalone/Icon Sheet Studio/src-tauri'; if(fs.existsSync(p)) fs.rmSync(p, {recursive: true, force: true});\"",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build && bun scripts/prepare-standalone.mjs",
     "start": "NODE_ENV=production bun .next/standalone/Icon\\ Sheet\\ Studio/server.js",
     "desktop:dev": "bunx @tauri-apps/cli@latest dev",
     "desktop:build": "bun run build && bunx @tauri-apps/cli@latest build",

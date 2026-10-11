@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Icon Sheet Studio</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0b0c10;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f1f5f9;
+    }
+    .background-glow {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.08) 40%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(40px);
+      animation: pulse-glow 4s ease-in-out infinite alternate;
+    }
+    @keyframes pulse-glow {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.15); opacity: 1; }
+    }
+    .splash-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+    .logo-wrapper {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: float-logo 3s ease-in-out infinite alternate;
+    }
+    @keyframes float-logo {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-4px); }
+    }
+    .logo-wrapper svg {
+      width: 52px;
+      height: 52px;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 32px;
+      letter-spacing: 0.02em;
+    }
+    .progress-track {
+      width: 220px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 45%;
+      background: linear-gradient(90deg, #6366f1, #a855f7, #6366f1);
+      background-size: 200% 100%;
+      border-radius: 999px;
+      animation: indeterminate 1.8s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+    }
+    @keyframes indeterminate {
+      0% {
+        left: -40%;
+        width: 40%;
+      }
+      50% {
+        left: 20%;
+        width: 60%;
+      }
+      100% {
+        left: 100%;
+        width: 40%;
+      }
+    }
+    .status-text {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: opacity 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-glow"></div>
+  <div class="splash-container">
+    <div class="logo-wrapper">
+      <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24.51 28.51H5.49c-2.21 0-4-1.79-4-4V5.49c0-2.21 1.79-4 4-4h19.03c2.21 0 4 1.79 4 4v19.03c0 2.21-1.79 3.99-4.01 3.99z" fill="#18181b" stroke="#3f3f46" stroke-width="0.8"/>
+        <g>
+          <path d="M15.47 7.1l-1.3 1.85c-0.2 0.29-0.54 0.47-0.9 0.47h-7.1V7.09h9.3z" fill="#f8fafc"/>
+          <polygon points="24.3,7.1 13.14,22.91 5.7,22.91 16.86,7.1" fill="#f8fafc"/>
+          <path d="M14.53 22.91l1.31-1.86c0.2-0.29 0.54-0.47 0.9-0.47h7.09v2.33H14.53z" fill="#f8fafc"/>
+        </g>
+      </svg>
+    </div>
+    <div class="title">Icon Sheet Studio</div>
+    <div class="subtitle">Professional Icon-Sheet Artwork</div>
+    <div class="progress-track">
+      <div class="progress-bar"></div>
+    </div>
+    <div class="status-text" id="status-label">Starting desktop engine...</div>
+  </div>
+</body>
+</html>

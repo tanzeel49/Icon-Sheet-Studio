@@ -4,6 +4,51 @@ use std::net::TcpListener;
 use tauri::Url;
 use tauri_plugin_dialog::DialogExt;
 
+fn find_server_js(resource_dir: &std::path::Path) -> Option<std::path::PathBuf> {
+    // 1. Check known candidate paths directly
+    let candidates = [
+        resource_dir.join("_up_").join(".next").join("standalone").join("server.js"),
+        resource_dir.join("_up_").join(".next").join("standalone").join("Icon Sheet Studio").join("server.js"),
+        resource_dir.join(".next").join("standalone").join("server.js"),
+        resource_dir.join(".next").join("standalone").join("Icon Sheet Studio").join("server.js"),
+        resource_dir.join("standalone").join("server.js"),
+        resource_dir.join("standalone").join("Icon Sheet Studio").join("server.js"),
+        resource_dir.join("server.js"),
+    ];
+
+    for candidate in &candidates {
+        if candidate.is_file() {
+            return Some(candidate.clone());
+        }
+    }
+
+    // 2. Recursive fallback search (up to 5 directory levels deep)
+    fn search_dir(dir: &std::path::Path, depth: usize) -> Option<std::path::PathBuf> {
+        if depth == 0 {
+            return None;
+        }
+        if let Ok(entries) = std::fs::read_dir(dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_file() && path.file_name().and_then(|s| s.to_str()) == Some("server.js") {
+                    return Some(path);
+                } else if path.is_dir() {
+                    let dir_name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
+                    if dir_name == "node_modules" {
+                        continue;
+                    }
+                    if let Some(found) = search_dir(&path, depth - 1) {
+                        return Some(found);
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    search_dir(resource_dir, 5)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -44,35 +89,15 @@ pub fn run() {
           }
       };
       
-      let mut standalone_path = resource_dir.clone();
-      
-      // Tauri maps `../` to `_up_` in the resource directory
-      let possible_paths = vec![
-          resource_dir.join("_up_").join(".next").join("standalone"),
-          resource_dir.join(".next").join("standalone"),
-          resource_dir.join("standalone"),
-      ];
-
-      for path in possible_paths {
-          if path.exists() {
-              standalone_path = path;
-              break;
+      let server_js_path = match find_server_js(&resource_dir) {
+          Some(path) => path,
+          None => {
+              app.dialog().message(format!("server.js not found in app resource directory: {:?}", resource_dir)).show(|_| {});
+              return Ok(());
           }
-      }
-      
-      // Handle Next.js workspace monorepo structure (if Icon Sheet Studio folder exists)
-      let mut project_standalone_path = standalone_path.clone();
-      project_standalone_path.push("Icon Sheet Studio");
-      if project_standalone_path.exists() {
-          standalone_path = project_standalone_path;
-      }
-      
-      let server_js_path = standalone_path.join("server.js");
+      };
 
-      if !server_js_path.exists() {
-          app.dialog().message(format!("server.js not found at {:?}", server_js_path)).show(|_| {});
-          return Ok(());
-      }
+      let standalone_path = server_js_path.parent().map(|p| p.to_path_buf()).unwrap_or_else(|| resource_dir.clone());
 
       let sidecar_command = match app.shell().sidecar("node") {
           Ok(cmd) => cmd,
