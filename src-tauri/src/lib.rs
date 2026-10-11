@@ -67,6 +67,77 @@ async fn write_file_native(path: String, data: Vec<u8>) -> Result<u64, String> {
     Ok(bytes_written)
 }
 
+fn migrate_indexeddb_to_port(port: u16) {
+    if let Ok(local_app_data) = std::env::var("LOCALAPPDATA") {
+        let idb_dir = std::path::PathBuf::from(local_app_data)
+            .join("com.iconsheetstudio.desktop")
+            .join("EBWebView")
+            .join("Default")
+            .join("IndexedDB");
+
+        if !idb_dir.exists() {
+            return;
+        }
+
+        let target_dir_name = format!("http_127.0.0.1_{}.indexeddb.leveldb", port);
+        let target_dir = idb_dir.join(&target_dir_name);
+
+        let mut best_source: Option<(std::path::PathBuf, u64)> = None;
+
+        if let Ok(entries) = std::fs::read_dir(&idb_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
+                    if name.starts_with("http_127.0.0.1_") && name.ends_with(".indexeddb.leveldb") && name != target_dir_name {
+                        let mut total_size: u64 = 0;
+                        if let Ok(files) = std::fs::read_dir(&path) {
+                            for file in files.flatten() {
+                                if let Ok(meta) = file.metadata() {
+                                    total_size += meta.len();
+                                }
+                            }
+                        }
+                        if total_size > 50_000 {
+                            if best_source.as_ref().map(|(_, s)| total_size > *s).unwrap_or(true) {
+                                best_source = Some((path, total_size));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if let Some((source_dir, source_size)) = best_source {
+            let mut target_size: u64 = 0;
+            if target_dir.exists() {
+                if let Ok(files) = std::fs::read_dir(&target_dir) {
+                    for file in files.flatten() {
+                        if let Ok(meta) = file.metadata() {
+                            target_size += meta.len();
+                        }
+                    }
+                }
+            }
+
+            if target_size < source_size {
+                let _ = std::fs::create_dir_all(&target_dir);
+                if let Ok(files) = std::fs::read_dir(&source_dir) {
+                    for file in files.flatten() {
+                        let file_path = file.path();
+                        if file_path.is_file() {
+                            let file_name = file_path.file_name().unwrap();
+                            let dest_file = target_dir.join(file_name);
+                            let _ = std::fs::copy(&file_path, &dest_file);
+                        }
+                    }
+                }
+                println!("Migrated IndexedDB from {:?} to {:?}", source_dir, target_dir);
+            }
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -82,23 +153,32 @@ pub fn run() {
         return Ok(());
       }
 
-      // In production, start the bundled Next.js standalone server
-      let listener = match TcpListener::bind("127.0.0.1:0") {
-          Ok(l) => l,
-          Err(e) => {
-              app.dialog().message(format!("Failed to bind port: {}", e)).show(|_| {});
-              return Ok(());
+      // In production, use fixed port 14210 so IndexedDB and localStorage origins persist permanently
+      const FIXED_PORT: u16 = 14210;
+      let port = match TcpListener::bind(format!("127.0.0.1:{}", FIXED_PORT)) {
+          Ok(l) => {
+              drop(l);
+              FIXED_PORT
+          }
+          Err(_) => {
+              // Fallback to dynamic port if 14210 is temporarily busy
+              let listener = match TcpListener::bind("127.0.0.1:0") {
+                  Ok(l) => l,
+                  Err(e) => {
+                      app.dialog().message(format!("Failed to bind port: {}", e)).show(|_| {});
+                      return Ok(());
+                  }
+              };
+              let p = match listener.local_addr() {
+                  Ok(addr) => addr.port(),
+                  Err(_) => FIXED_PORT,
+              };
+              drop(listener);
+              p
           }
       };
-      
-      let port = match listener.local_addr() {
-          Ok(addr) => addr.port(),
-          Err(e) => {
-              app.dialog().message(format!("Failed to get local address: {}", e)).show(|_| {});
-              return Ok(());
-          }
-      };
-      drop(listener); // Free the port so Next.js can bind to it
+
+      migrate_indexeddb_to_port(port);
 
       let resource_dir = match app.path().resource_dir() {
           Ok(dir) => dir,
