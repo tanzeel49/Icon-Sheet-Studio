@@ -3,10 +3,28 @@
 /**
  * ICON SHEET STUDIO — Header.
  * Left: brand · Center: workspace stats · Right: undo/redo, save state,
- * theme, export.
+ * version history, storage health, theme, export.
  */
 
-import { Undo2, Redo2, Download, Sun, Moon, Monitor, Grid3x3, Keyboard, Search, HeartPulse, HardDriveDownload, PencilRuler, Library, RefreshCcw } from "lucide-react";
+import {
+  Undo2,
+  Redo2,
+  Download,
+  Sun,
+  Moon,
+  Monitor,
+  Grid3x3,
+  Keyboard,
+  Search,
+  HeartPulse,
+  HardDriveDownload,
+  PencilRuler,
+  Library,
+  RefreshCcw,
+  History,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useSyncExternalStore, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -26,24 +44,62 @@ function useMounted(): boolean {
 
 function SaveIndicator() {
   const saveStatus = useStudio((s) => s.saveStatus);
+  const setStorageHealthOpen = useStudio((s) => s.setStorageHealthOpen);
+  const setRecoveryDialogOpen = useStudio((s) => s.setRecoveryDialogOpen);
+  const saveProjectNow = useStudio((s) => s.saveProjectNow);
+  const hasYesterdayRecovery = useStudio((s) => s.hasYesterdayRecovery);
+
   const label =
-    saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved" : saveStatus === "error" ? "Save failed" : "Up to date";
+    saveStatus === "saving"
+      ? "Saving…"
+      : saveStatus === "saved"
+      ? "All changes saved"
+      : saveStatus === "error"
+      ? "Save failed — Click to retry"
+      : saveStatus === "recovery_available"
+      ? "Recovery available"
+      : "All changes saved";
+
   const dot =
     saveStatus === "saving"
       ? "bg-amber-400 animate-pulse"
       : saveStatus === "error"
-        ? "bg-red-500"
-        : "bg-emerald-500";
+      ? "bg-red-500"
+      : saveStatus === "recovery_available"
+      ? "bg-amber-500 animate-bounce"
+      : "bg-emerald-500";
+
+  const handleClick = () => {
+    if (saveStatus === "error") {
+      void saveProjectNow("Manual retry");
+    } else if (saveStatus === "recovery_available") {
+      setRecoveryDialogOpen(true);
+    } else {
+      setStorageHealthOpen(true);
+    }
+  };
+
   return (
-    <span
-      className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-muted-foreground px-2 h-8 rounded-md hover:bg-muted/60 transition-colors"
+    <button
+      type="button"
+      onClick={handleClick}
+      className={`hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 h-8 rounded-md transition-colors cursor-pointer border ${
+        saveStatus === "error"
+          ? "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/20"
+          : saveStatus === "recovery_available"
+          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/20"
+          : "text-muted-foreground border-transparent hover:bg-muted/60 hover:text-foreground"
+      }`}
       role="status"
       aria-live="polite"
-      title={`Workspace autosave: ${label}`}
+      title={`Project storage: ${label}. Click to open Storage & Recovery.`}
     >
       <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-      {label}
-    </span>
+      <span>{label}</span>
+      {hasYesterdayRecovery && (
+        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" title="Yesterday's recovered work available" />
+      )}
+    </button>
   );
 }
 
@@ -94,9 +150,9 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
   const canRedo = useStudio((s) => s.future.length > 0);
   const undo = useStudio((s) => s.undo);
   const redo = useStudio((s) => s.redo);
-  const openBackupDialog = useStudio((s) => s.openBackupDialog);
+  const setVersionHistoryOpen = useStudio((s) => s.setVersionHistoryOpen);
+  const setStorageHealthOpen = useStudio((s) => s.setStorageHealthOpen);
   const { theme, setTheme } = useTheme();
-  // theme is undefined during SSR — only trust it after mount
   const mounted = useMounted();
 
   const resolvedTheme = mounted ? (theme ?? "system") : "system";
@@ -120,14 +176,12 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
             <Grid3x3 className="h-4 w-4" />
           </div>
           <div className="leading-none hidden sm:block">
-            {/* the app's single h1 (axe page-has-heading-one, round 6) */}
             <h1 className="text-[13px] font-semibold tracking-tight">Icon Sheet Studio</h1>
             <div className="text-[10px] text-muted-foreground">Professional icon-sheet artwork</div>
           </div>
         </div>
 
-        {/* center stats — quiet mono text, not badge chips: the numbers are
-         * ambient status, not controls. HealthPill only when actionable. */}
+        {/* center stats */}
         <div className="flex-1 flex items-center justify-center gap-2 min-w-0">
           {iconCount > 0 || sheetCount > 0 ? (
             <>
@@ -141,12 +195,11 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
               <HealthPill />
             </>
           ) : (
-            <span className="text-[11px] text-muted-foreground hidden sm:block">Local-first · nothing leaves your browser</span>
+            <span className="text-[11px] text-muted-foreground hidden sm:block">Local-first · Authoritative desktop storage</span>
           )}
         </div>
 
-        {/* actions — grouped with hairline separators so each cluster reads
-         * as one unit: search · history · status · utilities · primary CTA */}
+        {/* actions */}
         <div className="flex items-center gap-1">
           {/* command palette trigger */}
           <Tooltip>
@@ -193,7 +246,40 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
             <TooltipContent>Redo <span className="text-muted-foreground">Ctrl+Shift+Z</span></TooltipContent>
           </Tooltip>
 
+          {/* Persistent save indicator */}
           <SaveIndicator />
+
+          {/* Version History */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setVersionHistoryOpen(true)}
+                aria-label="Version history"
+              >
+                <History className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Version history <span className="text-muted-foreground">checkpoints</span></TooltipContent>
+          </Tooltip>
+
+          {/* Storage & Recovery */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setStorageHealthOpen(true)}
+                aria-label="Storage, backups and recovery"
+              >
+                <ShieldCheck className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Storage & Data Safety <span className="text-muted-foreground">backups / recovery</span></TooltipContent>
+          </Tooltip>
 
           <span className="hidden sm:block h-4 w-px bg-border/60 mx-1" aria-hidden="true" />
 
@@ -215,19 +301,7 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
             <TooltipContent>Check for updates</TooltipContent>
           </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={openBackupDialog} aria-label="Workspace backup and restore">
-                <HardDriveDownload className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Workspace backup <span className="text-muted-foreground">download / restore</span></TooltipContent>
-          </Tooltip>
-
-          {/* Template Builder — Phase 1 entry point (additive; the studio
-              workflow underneath is untouched while the builder overlay is
-              open). Outlined so it reads as a workspace switch, not an
-              action on the current sheet. */}
+          {/* Template Builder */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -244,8 +318,7 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
             <TooltipContent>Template Builder <span className="text-muted-foreground">design reusable sheet layouts</span></TooltipContent>
           </Tooltip>
 
-          {/* Template Library — every template in one management surface
-              (official / builder-made / uploaded SVG). */}
+          {/* Template Library */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -278,8 +351,7 @@ export function Header({ onExport, onHelp, onCheckUpdate, onToggleLeft, onToggle
             <span className="hidden sm:inline">Export</span>
           </Button>
 
-          {/* right-panel drawer toggle — the properties sidebar is a permanent
-              column from lg (1024) up, so the toggle only exists below that */}
+          {/* right-panel drawer toggle */}
           <Button variant="ghost" size="icon" className="h-8 w-8 lg:hidden" onClick={onToggleRight} aria-label="Open design properties">
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" />

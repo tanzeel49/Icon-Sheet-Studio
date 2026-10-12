@@ -12,7 +12,7 @@ export interface SaveResult {
 }
 
 export const isDesktop = () => {
-  return typeof window !== "undefined" && window.__TAURI_INTERNALS__ !== undefined;
+  return typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__ !== undefined;
 };
 
 export async function saveFileNative(

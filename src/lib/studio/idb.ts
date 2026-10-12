@@ -18,7 +18,7 @@ const STORE_TEMPLATES = "customTemplates";
 const STORE_PRESETS = "designPresets";
 const STORE_BUILDER_DOCS = "builderDocs";
 
-export type SaveStatus = "idle" | "saving" | "saved" | "error";
+export type SaveStatus = "idle" | "saving" | "saved" | "error" | "recovery_available";
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 

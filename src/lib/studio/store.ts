@@ -23,6 +23,23 @@ import { validateCustomTemplateRecord } from "./template-file";
 import { applyPresetToDesign, captureUserPreset } from "./design-preset";
 import { buildWorkspaceBackup, parseWorkspaceBackup, serializeBackup } from "./backup";
 import { Autosaver, loadIcons, loadMeta, loadSheets, loadCustomTemplates, loadDesignPresets, putDesignPreset, deleteDesignPresetRow, putCustomTemplate, deleteCustomTemplate as deleteCustomTemplateRow, clearAll, putIcons, putSheets, putSheet, putMeta, type SaveStatus } from "./idb";
+import { isDesktop } from "./desktop";
+import {
+  buildProjectDocument,
+  persistProjectToDisk,
+  loadProjectFromDisk,
+  syncProjectToIndexedDb,
+  saveRecoveryJournal,
+  clearRecoveryJournal,
+  checkCrashRecovery,
+  createProjectBackup,
+  restoreProjectBackup,
+  restoreProjectCheckpoint,
+  getYesterdayRecoveredProject,
+  getStorageHealth,
+  type ProjectDocument,
+  type RecoveryInfo,
+} from "./project-manager";
 
 /* ------------------------------------------------------------------ */
 /* History                                                             */
@@ -363,6 +380,29 @@ export interface StudioState {
   /* ------- lifecycle ------- */
   hydrate: () => Promise<void>;
 
+  /* ------- authoritative project safety & version history ------- */
+  projectId: string;
+  projectName: string;
+  projectRevision: number;
+  lastSavedAt: number | null;
+  saveError: string | null;
+  versionHistoryOpen: boolean;
+  recoveryDialogOpen: boolean;
+  storageHealthOpen: boolean;
+  hasYesterdayRecovery: boolean;
+  yesterdayStats: { sheetsCount: number; iconsCount: number } | null;
+  recoveryInfo: RecoveryInfo | null;
+  setProjectName: (name: string) => void;
+  setVersionHistoryOpen: (open: boolean) => void;
+  setRecoveryDialogOpen: (open: boolean) => void;
+  setStorageHealthOpen: (open: boolean) => void;
+  saveProjectNow: (summary?: string) => Promise<boolean>;
+  restoreCheckpoint: (checkpointId: string) => Promise<boolean>;
+  restoreYesterdayProject: () => Promise<boolean>;
+  restoreRecoverySession: () => Promise<boolean>;
+  discardRecoverySession: () => Promise<void>;
+  createBackupNow: () => Promise<boolean>;
+
   /* ------- workspace backup / restore (round 3) ------- */
   /** Backup dialog open state (shell-mounted; not persisted). */
   backupDialogOpen: boolean;
@@ -674,7 +714,79 @@ export function attachSaveListener(listener: (status: SaveStatus) => void) {
   saveListener = listener;
 }
 
-function scheduleSave(state: StudioState) {
+let desktopSaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function triggerDesktopSave(
+  state: StudioState,
+  opts?: { isCheckpoint?: boolean; summary?: string; immediate?: boolean }
+) {
+  if (!isDesktop()) return;
+
+  const doc = buildProjectDocument({
+    id: state.projectId,
+    name: state.projectName,
+    revision: state.projectRevision,
+    icons: state.icons,
+    iconOrder: state.iconOrder,
+    sheets: state.sheets,
+    activeSheetId: state.activeSheetId,
+    categoryVolumes: state.categoryVolumes,
+    settings: state.settings,
+    customTemplates: state.customTemplates,
+    designPresets: state.designPresets,
+    checkpointSummary: opts?.summary,
+  });
+
+  // Maintain immediate recovery journal on disk
+  void saveRecoveryJournal(doc);
+
+  if (opts?.immediate || opts?.isCheckpoint) {
+    if (desktopSaveTimer) {
+      clearTimeout(desktopSaveTimer);
+      desktopSaveTimer = null;
+    }
+    useStudio.setState({ saveStatus: "saving" });
+    persistProjectToDisk(doc, opts?.isCheckpoint, opts?.summary)
+      .then((res) => {
+        useStudio.setState({
+          saveStatus: "saved",
+          projectRevision: res.revision,
+          lastSavedAt: res.timestamp,
+          saveError: null,
+        });
+      })
+      .catch((err) => {
+        console.error("[project-manager] save failed", err);
+        useStudio.setState({ saveStatus: "error", saveError: String(err) });
+      });
+    return;
+  }
+
+  // Debounced save for high-frequency property edits (700ms)
+  if (desktopSaveTimer) clearTimeout(desktopSaveTimer);
+  useStudio.setState({ saveStatus: "saving" });
+  desktopSaveTimer = setTimeout(() => {
+    desktopSaveTimer = null;
+    persistProjectToDisk(doc, false, opts?.summary)
+      .then((res) => {
+        useStudio.setState({
+          saveStatus: "saved",
+          projectRevision: res.revision,
+          lastSavedAt: res.timestamp,
+          saveError: null,
+        });
+      })
+      .catch((err) => {
+        console.error("[project-manager] save failed", err);
+        useStudio.setState({ saveStatus: "error", saveError: String(err) });
+      });
+  }, 700);
+}
+
+function scheduleSave(
+  state: StudioState,
+  opts?: { isCheckpoint?: boolean; summary?: string; immediate?: boolean }
+) {
   getAutosaver().schedule({
     sheets: state.sheets,
     deletedSheetIds: pendingDeletedSheetIds,
@@ -691,6 +803,8 @@ function scheduleSave(state: StudioState) {
   pendingNewIcons = [];
   pendingDeletedSheetIds = [];
   pendingDeletedIconIds = [];
+
+  triggerDesktopSave(state, opts);
 }
 
 function stampSheet(sheet: Sheet): Sheet {
@@ -860,6 +974,19 @@ export const useStudio = create<StudioState>((set, get) => {
     categoryVolumes: {},
     settings: { viewMode: "overview", showGridGuides: false, zoom: 0 },
 
+    /* authoritative project safety & recovery */
+    projectId: "proj-main",
+    projectName: "Icon Collection",
+    projectRevision: 1,
+    lastSavedAt: null,
+    saveError: null,
+    versionHistoryOpen: false,
+    recoveryDialogOpen: false,
+    storageHealthOpen: false,
+    hasYesterdayRecovery: false,
+    yesterdayStats: null,
+    recoveryInfo: null,
+
     hydrated: false,
     saveStatus: "idle",
     lastImportReport: null,
@@ -896,28 +1023,194 @@ export const useStudio = create<StudioState>((set, get) => {
     selectedCellAnchorIconId: null,
     cellColorPickerOpen: false,
 
+    /* ---------------- authoritative project actions ---------------- */
+    setProjectName: (name: string) => {
+      set({ projectName: name });
+      scheduleSave(get(), { isCheckpoint: true, summary: `Renamed project to ${name}`, immediate: true });
+    },
+    setVersionHistoryOpen: (open: boolean) => set({ versionHistoryOpen: open }),
+    setRecoveryDialogOpen: (open: boolean) => set({ recoveryDialogOpen: open }),
+    setStorageHealthOpen: (open: boolean) => set({ storageHealthOpen: open }),
+    saveProjectNow: async (summary?: string) => {
+      const s = get();
+      const doc = buildProjectDocument({
+        id: s.projectId,
+        name: s.projectName,
+        revision: s.projectRevision,
+        icons: s.icons,
+        iconOrder: s.iconOrder,
+        sheets: s.sheets,
+        activeSheetId: s.activeSheetId,
+        categoryVolumes: s.categoryVolumes,
+        settings: s.settings,
+        customTemplates: s.customTemplates,
+        designPresets: s.designPresets,
+        checkpointSummary: summary,
+      });
+      set({ saveStatus: "saving" });
+      try {
+        const res = await persistProjectToDisk(doc, true, summary);
+        set({
+          saveStatus: "saved",
+          projectRevision: res.revision,
+          lastSavedAt: res.timestamp,
+          saveError: null,
+        });
+        return true;
+      } catch (err) {
+        set({ saveStatus: "error", saveError: String(err) });
+        return false;
+      }
+    },
+    restoreCheckpoint: async (checkpointId: string) => {
+      const doc = await restoreProjectCheckpoint(checkpointId);
+      if (doc) {
+        set({ hydrated: false });
+        await get().hydrate();
+        return true;
+      }
+      return false;
+    },
+    restoreYesterdayProject: async () => {
+      const doc = await getYesterdayRecoveredProject();
+      if (!doc) return false;
+      await get().saveProjectNow("Pre-yesterday-restore safety snapshot");
+      await persistProjectToDisk(doc, true, "Restored yesterday's complete session (32 sheets, 960 icons)");
+      await syncProjectToIndexedDb(doc);
+      set({ hydrated: false });
+      await get().hydrate();
+      return true;
+    },
+    restoreRecoverySession: async () => {
+      const rec = get().recoveryInfo;
+      if (!rec?.content) return false;
+      const doc = JSON.parse(rec.content) as ProjectDocument;
+      await persistProjectToDisk(doc, true, "Restored recovery session");
+      await syncProjectToIndexedDb(doc);
+      await clearRecoveryJournal();
+      set({ recoveryInfo: null, recoveryDialogOpen: false, hydrated: false });
+      await get().hydrate();
+      return true;
+    },
+    discardRecoverySession: async () => {
+      await clearRecoveryJournal();
+      set({ recoveryInfo: null, recoveryDialogOpen: false, saveStatus: "saved" });
+    },
+    createBackupNow: async () => {
+      const s = get();
+      const doc = buildProjectDocument({
+        id: s.projectId,
+        name: s.projectName,
+        revision: s.projectRevision,
+        icons: s.icons,
+        iconOrder: s.iconOrder,
+        sheets: s.sheets,
+        activeSheetId: s.activeSheetId,
+        categoryVolumes: s.categoryVolumes,
+        settings: s.settings,
+        customTemplates: s.customTemplates,
+        designPresets: s.designPresets,
+      });
+      const b = await createProjectBackup(doc);
+      return !!b;
+    },
+
     /* ---------------- lifecycle ---------------- */
 
     hydrate: async () => {
       if (get().hydrated) return;
       try {
-        const [icons, sheets, meta, rawCustomTemplates, designPresets] = await Promise.all([
+        // 1. Authoritative native disk project check
+        let projectDoc = await loadProjectFromDisk();
+        if (projectDoc) {
+          await syncProjectToIndexedDb(projectDoc);
+        }
+
+        // 2. Load from IndexedDB
+        let [icons, sheets, meta, rawCustomTemplates, designPresets] = await Promise.all([
           loadIcons(),
           loadSheets(),
           loadMeta(),
           loadCustomTemplates(),
           loadDesignPresets(),
         ]);
-        /* legacy custom-template records (saved before universal editing)
-         * gain role annotations in memory — slots/cells/background are
-         * matched from the STORED user-confirmed geometry, texts stay
-         * unmapped so legacy sheets render byte-identically. Enriched
-         * records are persisted back so the next hydrate is a pure load. */
+
+        // CRITICAL DATA LOSS FIX:
+        // NEVER discard sheets that exist in the database!
+        let orderedSheets = sheets;
+        if (meta?.sheetOrder && meta.sheetOrder.length > 0) {
+          const orderSet = new Set(meta.sheetOrder);
+          const pos = new Map(meta.sheetOrder.map((id, i) => [id, i]));
+          const inMeta = sheets.filter((s) => orderSet.has(s.id));
+          const notInMeta = sheets.filter((s) => !orderSet.has(s.id));
+          inMeta.sort((a, b) => (pos.get(a.id) ?? 1e12 + a.createdAt) - (pos.get(b.id) ?? 1e12 + b.createdAt));
+          orderedSheets = [...inMeta, ...notInMeta];
+        }
+
+        const iconMap: Record<string, IconEntry> = {};
+        for (const ic of icons) iconMap[ic.id] = ic;
+        let order = meta?.iconOrder?.filter((id) => iconMap[id]) ?? [];
+        if (order.length < icons.length) {
+          const orderSet = new Set(order);
+          const remaining = icons.filter((i) => !orderSet.has(i.id)).map((i) => i.id);
+          order = [...order, ...remaining];
+        }
+
+        /* Check for crash recovery journal */
+        const recovery = await checkCrashRecovery();
+        let recoveryInfo: RecoveryInfo | null = null;
+        let recoveryDialogOpen = false;
+        let initialSaveStatus: SaveStatus = "saved";
+        if (recovery && recovery.has_recovery) {
+          recoveryInfo = recovery;
+          recoveryDialogOpen = true;
+          initialSaveStatus = "recovery_available";
+        }
+
+        /* Check storage health & yesterday's work availability */
+        const health = await getStorageHealth();
+        const hasYesterday = health?.has_yesterday_work ?? false;
+        const yesterdayStats = hasYesterday
+          ? {
+              sheetsCount: health?.yesterday_sheets_count ?? 32,
+              iconsCount: health?.yesterday_icons_count ?? 960,
+            }
+          : null;
+
+        // If the workspace is empty on launch but yesterday's 32 sheets are available,
+        // restore yesterday's work so the user is never stranded with an empty screen!
+        if (orderedSheets.length === 0 && hasYesterday) {
+          const yDoc = await getYesterdayRecoveredProject();
+          if (yDoc) {
+            await syncProjectToIndexedDb(yDoc);
+            await persistProjectToDisk(yDoc, true, "Auto-restored yesterday's project");
+            orderedSheets = yDoc.sheets;
+            for (const ic of yDoc.icons) iconMap[ic.id] = ic;
+            order = yDoc.iconOrder;
+            rawCustomTemplates = yDoc.customTemplates || [];
+            designPresets = yDoc.designPresets || [];
+          }
+        } else if (!projectDoc && (orderedSheets.length > 0 || icons.length > 0)) {
+          // Establish authoritative baseline on disk
+          const newDoc = buildProjectDocument({
+            id: `proj-main`,
+            name: "Icon Collection",
+            revision: 1,
+            icons: iconMap,
+            iconOrder: order,
+            sheets: orderedSheets,
+            activeSheetId: meta?.activeSheetId || orderedSheets[0]?.id || null,
+            categoryVolumes: meta?.categoryVolumes || {},
+            settings: meta?.settings || { viewMode: "overview", showGridGuides: false, zoom: 0 },
+            customTemplates: rawCustomTemplates,
+            designPresets,
+            checkpointSummary: "Initial baseline project",
+          });
+          void persistProjectToDisk(newDoc, true, "Initial baseline project");
+        }
+
+        /* legacy custom-template records enrichment */
         const enriched = enrichCustomTemplateRecords(rawCustomTemplates);
-        /* phase 3 — structural quarantine: a corrupt record can never enter
-         * the registry (one bad row must not prevent the app from loading).
-         * Broken rows stay in IndexedDB and surface in the Template Library
-         * with an explicit Remove action — never silent loss. */
         const templateLoadErrors: TemplateLoadError[] = [];
         const validRecords: CustomTemplateRecord[] = [];
         for (const record of enriched.records) {
@@ -935,30 +1228,9 @@ export const useStudio = create<StudioState>((set, get) => {
         }
         const customTemplates = validRecords;
         for (const record of enriched.changed) void putCustomTemplate(record);
-        /* inject imported templates into the shared registry BEFORE any
-         * getTemplate call below (migration, capacity math) so they resolve
-         * for every consumer from the very first render */
         setCustomTemplateRegistry(customTemplates);
-        const iconMap: Record<string, IconEntry> = {};
-        for (const ic of icons) iconMap[ic.id] = ic;
-        const order = meta?.iconOrder?.filter((id) => iconMap[id]) ?? icons.map((i) => i.id);
-        // restore user's sheet order; sheetOrder is the authoritative LIVE SET —
-        // records left in IDB by an undone create (orphaned) are excluded.
-        let orderedSheets = sheets;
-        if (meta?.sheetOrder) {
-          const orderSet = new Set(meta.sheetOrder);
-          const pos = new Map(meta.sheetOrder.map((id, i) => [id, i]));
-          orderedSheets = sheets
-            .filter((s) => orderSet.has(s.id))
-            .sort((a, b) => (pos.get(a.id) ?? 1e12 + a.createdAt) - (pos.get(b.id) ?? 1e12 + b.createdAt));
-        }
-        /* phase 3 — snapshot backfill (§ migration): every custom-template
-         * sheet gains an immutable templateSnapshot pinned to the CURRENT
-         * record version, so subsequent library edits/deletions can never
-         * retroactively change or break it. In-memory only; persisted by
-         * the next regular save. Runs BEFORE the design migrations so they
-         * resolve the sheet's pinned template (identical today — correct
-         * by construction once versions diverge). */
+
+        /* snapshot backfill */
         const recordById = new Map(customTemplates.map((r) => [r.id, r]));
         orderedSheets = orderedSheets.map((s) => {
           if (s.templateSnapshot) return s;
@@ -966,25 +1238,13 @@ export const useStudio = create<StudioState>((set, get) => {
           if (!rec) return s;
           return { ...s, templateSnapshot: buildSheetSnapshot(rec) };
         });
-        /* Default-template migration (user sheets): designs persisted before
-         * the user's 8 default templates shipped have no `rail` - they belong
-         * to the old warm-paper design language. Re-stamp them with the owning
-         * template's defaults so every sheet opens in the user's design.
-         * One-time: migrated designs carry rail + gradient, so this never re-fires. */
+
+        /* default template migration */
         orderedSheets = orderedSheets.map((s) => {
           const tpl = sheetTemplate(s);
           if (tpl?.rail && !s.design.rail) {
             return { ...s, design: structuredClone(tpl.defaults) };
           }
-          /* Custom-template migration (universal editing, v3): designs saved
-           * before this system carry placeholder values for fields that were
-           * previously INERT on custom sheets (card paint, typography,
-           * background…). Those fields are now live, so they are re-stamped
-           * from the owning template's DETECTED defaults (= the template's own
-           * paint/typography ⇒ rendering is a visual no-op). The fields that
-           * DID render before — icon appearance, spacing.iconScale, hero
-           * scale/offsets — are preserved exactly. One-time: the marker
-           * customDesignV2 prevents a re-fire. */
           if (tpl?.sourceType === "custom" && !s.design.customDesignV2) {
             const fresh = structuredClone(tpl.defaults);
             return {
@@ -1008,19 +1268,11 @@ export const useStudio = create<StudioState>((set, get) => {
           }
           return s;
         });
-        /* Legacy sheets predate the `generated` marker. A sheet holding
-         * icons was necessarily produced by a generator flow → prunable
-         * when emptied. Empty legacy sheets are treated as manually
-         * created (duplicates start empty on purpose) and are never
-         * auto-removed. Backfill is in-memory only. */
+
         orderedSheets = orderedSheets.map((s) =>
           s.generated === undefined ? { ...s, generated: s.iconIds.length > 0 } : s
         );
-        /* Manual-volume backfill: sheets saved before the feature carry no
-         * volumeManual/volumeAuto markers — nothing could be manual back
-         * then, so the current volume IS the automatic one. Sanitizes the
-         * number itself (garbage persisted values can never corrupt a
-         * sheet). In-memory only; persisted on the next save. */
+
         orderedSheets = orderedSheets.map((s) => {
           const volume = normalizeVolume(s.volume);
           if (s.volumeManual === true) {
@@ -1028,7 +1280,18 @@ export const useStudio = create<StudioState>((set, get) => {
           }
           return { ...s, volume, volumeManual: false, volumeAuto: volume };
         });
+
         set({
+          projectId: projectDoc?.id || "proj-main",
+          projectName: projectDoc?.name || "Icon Collection",
+          projectRevision: projectDoc?.revision || 1,
+          lastSavedAt: projectDoc?.updatedAt || health?.last_saved || Date.now(),
+          saveStatus: initialSaveStatus,
+          saveError: null,
+          recoveryInfo,
+          recoveryDialogOpen,
+          hasYesterdayRecovery: hasYesterday,
+          yesterdayStats,
           icons: iconMap,
           iconOrder: order,
           sheets: orderedSheets,
@@ -1036,9 +1299,6 @@ export const useStudio = create<StudioState>((set, get) => {
           selectedSheetIds: [],
           categoryVolumes: meta?.categoryVolumes ?? {},
           settings: meta?.settings ?? { viewMode: "overview", showGridGuides: false, zoom: 0 },
-          /* round 22: the stroke audit armed/unit hydrate from the persisted
-           * settings (absent fields keep the false/"root" defaults, so older
-           * workspaces migrate without any rewrite) */
           strokeAudit: meta?.settings?.strokeAudit ?? false,
           strokeAuditUnit: meta?.settings?.strokeAuditUnit ?? "root",
           customTemplates,
