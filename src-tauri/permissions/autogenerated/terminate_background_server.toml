@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-terminate-background-server"
+description = "Enables the terminate_background_server command without any pre-configured scope."
+commands.allow = ["terminate_background_server"]
+
+[[permission]]
+identifier = "deny-terminate-background-server"
+description = "Denies the terminate_background_server command without any pre-configured scope."
+commands.deny = ["terminate_background_server"]

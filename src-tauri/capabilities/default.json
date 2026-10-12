@@ -25,6 +25,21 @@
     "shell:allow-execute",
     "shell:allow-spawn",
     "updater:default",
-    "process:default"
+    "process:default",
+    "allow-write-file-native",
+    "allow-save-project-native",
+    "allow-load-project-native",
+    "allow-list-checkpoints-native",
+    "allow-restore-checkpoint-native",
+    "allow-save-recovery-journal-native",
+    "allow-clear-recovery-journal-native",
+    "allow-check-recovery-native",
+    "allow-create-backup-native",
+    "allow-list-backups-native",
+    "allow-restore-backup-native",
+    "allow-get-storage-health-native",
+    "allow-open-folder-native",
+    "allow-get-yesterday-recovered-project",
+    "allow-terminate-background-server"
   ]
 }

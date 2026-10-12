@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-clear-recovery-journal-native"
+description = "Enables the clear_recovery_journal_native command without any pre-configured scope."
+commands.allow = ["clear_recovery_journal_native"]
+
+[[permission]]
+identifier = "deny-clear-recovery-journal-native"
+description = "Denies the clear_recovery_journal_native command without any pre-configured scope."
+commands.deny = ["clear_recovery_journal_native"]

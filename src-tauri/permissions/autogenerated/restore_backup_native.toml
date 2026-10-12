@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-restore-backup-native"
+description = "Enables the restore_backup_native command without any pre-configured scope."
+commands.allow = ["restore_backup_native"]
+
+[[permission]]
+identifier = "deny-restore-backup-native"
+description = "Denies the restore_backup_native command without any pre-configured scope."
+commands.deny = ["restore_backup_native"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-check-recovery-native"
+description = "Enables the check_recovery_native command without any pre-configured scope."
+commands.allow = ["check_recovery_native"]
+
+[[permission]]
+identifier = "deny-check-recovery-native"
+description = "Denies the check_recovery_native command without any pre-configured scope."
+commands.deny = ["check_recovery_native"]

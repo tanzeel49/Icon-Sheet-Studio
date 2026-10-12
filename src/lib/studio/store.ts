@@ -1122,21 +1122,39 @@ export const useStudio = create<StudioState>((set, get) => {
       try {
         // 1. Authoritative native disk project check
         let projectDoc = await loadProjectFromDisk();
-        if (projectDoc) {
-          await syncProjectToIndexedDb(projectDoc);
+
+        let icons: IconEntry[] = [];
+        let sheets: Sheet[] = [];
+        let meta: WorkspaceMeta | null = null;
+        let rawCustomTemplates: CustomTemplateRecord[] = [];
+        let designPresets: UserDesignPreset[] = [];
+
+        if (projectDoc && projectDoc.sheets.length > 0) {
+          icons = projectDoc.icons;
+          sheets = projectDoc.sheets;
+          rawCustomTemplates = projectDoc.customTemplates || [];
+          designPresets = projectDoc.designPresets || [];
+          meta = {
+            activeSheetId: projectDoc.activeSheetId,
+            iconOrder: projectDoc.iconOrder,
+            sheetOrder: projectDoc.sheetOrder,
+            categoryVolumes: projectDoc.categoryVolumes,
+            settings: projectDoc.settings,
+          };
+          void syncProjectToIndexedDb(projectDoc);
+        } else {
+          // 2. Fallback to IndexedDB
+          [icons, sheets, meta, rawCustomTemplates, designPresets] = await Promise.all([
+            loadIcons(),
+            loadSheets(),
+            loadMeta(),
+            loadCustomTemplates(),
+            loadDesignPresets(),
+          ]);
         }
 
-        // 2. Load from IndexedDB
-        let [icons, sheets, meta, rawCustomTemplates, designPresets] = await Promise.all([
-          loadIcons(),
-          loadSheets(),
-          loadMeta(),
-          loadCustomTemplates(),
-          loadDesignPresets(),
-        ]);
-
         // CRITICAL DATA LOSS FIX:
-        // NEVER discard sheets that exist in the database!
+        // NEVER discard sheets that exist in the database or project!
         let orderedSheets = sheets;
         if (meta?.sheetOrder && meta.sheetOrder.length > 0) {
           const orderSet = new Set(meta.sheetOrder);
@@ -1177,18 +1195,27 @@ export const useStudio = create<StudioState>((set, get) => {
             }
           : null;
 
-        // If the workspace is empty on launch but yesterday's 32 sheets are available,
-        // restore yesterday's work so the user is never stranded with an empty screen!
-        if (orderedSheets.length === 0 && hasYesterday) {
+        // If the workspace has <= 1 sheet (or disk load returned minimal) but yesterday's 32 sheets are available,
+        // restore yesterday's work so the user is never stranded with an empty or accidental 1-sheet screen!
+        if ((orderedSheets.length <= 1 || !projectDoc) && hasYesterday) {
           const yDoc = await getYesterdayRecoveredProject();
-          if (yDoc) {
-            await syncProjectToIndexedDb(yDoc);
-            await persistProjectToDisk(yDoc, true, "Auto-restored yesterday's project");
+          if (yDoc && yDoc.sheets.length > orderedSheets.length) {
             orderedSheets = yDoc.sheets;
             for (const ic of yDoc.icons) iconMap[ic.id] = ic;
             order = yDoc.iconOrder;
             rawCustomTemplates = yDoc.customTemplates || [];
-            designPresets = yDoc.designPresets || [];
+            if (yDoc.designPresets && yDoc.designPresets.length > 0) {
+              designPresets = yDoc.designPresets;
+            }
+            meta = {
+              activeSheetId: yDoc.activeSheetId,
+              iconOrder: yDoc.iconOrder,
+              sheetOrder: yDoc.sheetOrder,
+              categoryVolumes: yDoc.categoryVolumes,
+              settings: yDoc.settings,
+            };
+            void syncProjectToIndexedDb(yDoc);
+            void persistProjectToDisk(yDoc, true, "Auto-restored yesterday complete project");
           }
         } else if (!projectDoc && (orderedSheets.length > 0 || icons.length > 0)) {
           // Establish authoritative baseline on disk
@@ -1207,6 +1234,23 @@ export const useStudio = create<StudioState>((set, get) => {
             checkpointSummary: "Initial baseline project",
           });
           void persistProjectToDisk(newDoc, true, "Initial baseline project");
+        }
+
+        // Ensure design presets are never lost: fallback to yesterday's recovered project or IndexedDB
+        if (designPresets.length === 0 && hasYesterday) {
+          const yDoc = await getYesterdayRecoveredProject();
+          if (yDoc && yDoc.designPresets && yDoc.designPresets.length > 0) {
+            designPresets = yDoc.designPresets;
+            for (const p of designPresets) {
+              void putDesignPreset(p);
+            }
+          }
+        }
+        if (designPresets.length === 0) {
+          const idbPresets = await loadDesignPresets();
+          if (idbPresets && idbPresets.length > 0) {
+            designPresets = idbPresets;
+          }
         }
 
         /* legacy custom-template records enrichment */
@@ -1718,6 +1762,7 @@ export const useStudio = create<StudioState>((set, get) => {
       const designPresets = [...s.designPresets, preset];
       set({ designPresets });
       void putDesignPreset(preset);
+      scheduleSave(get());
       const groups = Object.entries(includes)
         .filter(([, on]) => on)
         .map(([k]) => k)
@@ -1741,6 +1786,7 @@ export const useStudio = create<StudioState>((set, get) => {
       set({ designPresets });
       const preset = designPresets.find((p) => p.id === id);
       if (preset) void putDesignPreset(preset);
+      scheduleSave(get());
     },
 
     deleteDesignPreset: (id) => {
@@ -1750,6 +1796,7 @@ export const useStudio = create<StudioState>((set, get) => {
       const designPresets = s.designPresets.filter((p) => p.id !== id);
       set({ designPresets });
       void deleteDesignPresetRow(id);
+      scheduleSave(get());
       toast.success(`Preset “${preset.name}” deleted`);
     },
 

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-list-checkpoints-native"
+description = "Enables the list_checkpoints_native command without any pre-configured scope."
+commands.allow = ["list_checkpoints_native"]
+
+[[permission]]
+identifier = "deny-list-checkpoints-native"
+description = "Denies the list_checkpoints_native command without any pre-configured scope."
+commands.deny = ["list_checkpoints_native"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-save-recovery-journal-native"
+description = "Enables the save_recovery_journal_native command without any pre-configured scope."
+commands.allow = ["save_recovery_journal_native"]
+
+[[permission]]
+identifier = "deny-save-recovery-journal-native"
+description = "Denies the save_recovery_journal_native command without any pre-configured scope."
+commands.deny = ["save_recovery_journal_native"]

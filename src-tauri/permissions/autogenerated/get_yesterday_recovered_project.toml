@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-yesterday-recovered-project"
+description = "Enables the get_yesterday_recovered_project command without any pre-configured scope."
+commands.allow = ["get_yesterday_recovered_project"]
+
+[[permission]]
+identifier = "deny-get-yesterday-recovered-project"
+description = "Denies the get_yesterday_recovered_project command without any pre-configured scope."
+commands.deny = ["get_yesterday_recovered_project"]
