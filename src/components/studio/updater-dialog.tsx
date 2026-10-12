@@ -68,6 +68,7 @@ export function UpdaterDialog() {
     setStatus("downloading");
     setProgress(0);
     try {
+      const { invoke } = await import("@tauri-apps/api/core");
       const { relaunch } = await import("@tauri-apps/plugin-process");
       
       let downloaded = 0;
@@ -87,6 +88,13 @@ export function UpdaterDialog() {
         }
       });
       
+      // Cleanly kill node.exe before relaunch so the NSIS updater won't hit an ERROR_SHARING_VIOLATION file lock
+      try {
+        await invoke("terminate_background_server");
+      } catch (e) {
+        console.warn("Could not invoke terminate_background_server before relaunch:", e);
+      }
+
       setStatus("ready");
       toast.success("Update installed successfully. Restarting...");
       setTimeout(() => relaunch(), 1500);

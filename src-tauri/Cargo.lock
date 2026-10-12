@@ -1465,7 +1465,7 @@ dependencies = [
 
 [[package]]
 name = "icon-sheet-studio"
-version = "0.2.15"
+version = "0.2.16"
 dependencies = [
  "log",
  "serde",

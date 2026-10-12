@@ -672,6 +672,18 @@ fn migrate_indexeddb_to_port(port: u16) {
     }
 }
 
+#[tauri::command]
+fn terminate_background_server(app: tauri::AppHandle) {
+    if let Some(state) = app.try_state::<std::sync::Arc<std::sync::Mutex<Option<tauri_plugin_shell::process::CommandChild>>>>() {
+        if let Ok(mut child_lock) = state.lock() {
+            if let Some(child) = child_lock.take() {
+                let _ = child.kill();
+            }
+        }
+    }
+    kill_all_child_processes();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -694,7 +706,8 @@ pub fn run() {
         restore_backup_native,
         get_storage_health_native,
         open_folder_native,
-        get_yesterday_recovered_project
+        get_yesterday_recovered_project,
+        terminate_background_server
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {
