@@ -66,16 +66,12 @@ export function StorageRecoveryDialog() {
   const saveStatus = useStudio((s) => s.saveStatus);
   const setVersionHistoryOpen = useStudio((s) => s.setVersionHistoryOpen);
   const saveProjectNow = useStudio((s) => s.saveProjectNow);
-  const hasYesterdayRecovery = useStudio((s) => s.hasYesterdayRecovery);
-  const yesterdayStats = useStudio((s) => s.yesterdayStats);
-  const restoreYesterdayProject = useStudio((s) => s.restoreYesterdayProject);
   const hydrate = useStudio((s) => s.hydrate);
 
   const [health, setHealth] = useState<StorageHealth | null>(null);
   const [backups, setBackups] = useState<BackupInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [creatingBackup, setCreatingBackup] = useState(false);
-  const [restoringYesterday, setRestoringYesterday] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -175,30 +171,6 @@ export function StorageRecoveryDialog() {
     }
   };
 
-  const handleRestoreYesterday = async () => {
-    const confirm = window.confirm(
-      "Restore yesterday's recovered project?\n\nThis will restore all 32 sheets and 960 icons from yesterday's session. A safety checkpoint of your current state will be preserved automatically."
-    );
-    if (!confirm) return;
-
-    setRestoringYesterday(true);
-    try {
-      const ok = await restoreYesterdayProject();
-      if (ok) {
-        toast.success("Yesterday's work restored successfully!", {
-          description: "All 32 sheets and 960 icons have been loaded into the workspace.",
-        });
-        setOpen(false);
-      } else {
-        toast.error("Failed to restore yesterday's project.");
-      }
-    } catch (err) {
-      toast.error("Restoration failed: " + String(err));
-    } finally {
-      setRestoringYesterday(false);
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-6 space-y-4">
@@ -217,37 +189,6 @@ export function StorageRecoveryDialog() {
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-          {/* Yesterday's Work Bridge Card (if present) */}
-          {hasYesterdayRecovery && (
-            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">
-                      <Sparkles className="h-3 w-3" />
-                      Yesterday's Work Recovered
-                    </span>
-                  </div>
-                  <h4 className="text-sm font-semibold text-foreground">
-                    Icon Collection (Vol 01 - 35)
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    Contains {yesterdayStats?.sheetsCount ?? 32} sheets and {yesterdayStats?.iconsCount ?? 960} icons from yesterday's session preserved in storage.
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={handleRestoreYesterday}
-                  disabled={restoringYesterday}
-                  className="bg-amber-600 hover:bg-amber-700 text-white text-xs gap-1.5 shrink-0 shadow-sm"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  {restoringYesterday ? "Restoring…" : "Restore All 32 Sheets"}
-                </Button>
-              </div>
-            </div>
-          )}
-
           {/* Active Project Card */}
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 space-y-3">
             <div className="flex items-center justify-between">

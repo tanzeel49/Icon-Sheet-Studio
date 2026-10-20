@@ -406,31 +406,9 @@ export function StudioApp() {
   const [activeDrag, setActiveDrag] = useState<ActiveLibraryDrag | null>(null);
   const [dropDialog, setDropDialog] = useState<DropOverflowState | null>(null);
 
-  const hasYesterdayRecovery = useStudio((s) => s.hasYesterdayRecovery);
-  const restoreYesterdayProject = useStudio((s) => s.restoreYesterdayProject);
   const setVersionHistoryOpen = useStudio((s) => s.setVersionHistoryOpen);
   const setStorageHealthOpen = useStudio((s) => s.setStorageHealthOpen);
   const sheets = useStudio((s) => s.sheets);
-  const [dismissYesterdayBanner, setDismissYesterdayBanner] = useState(false);
-  const [restoringYesterday, setRestoringYesterday] = useState(false);
-
-  const handleRestoreYesterday = useCallback(async () => {
-    setRestoringYesterday(true);
-    try {
-      const ok = await restoreYesterdayProject();
-      if (ok) {
-        toast.success("Yesterday's work restored successfully!", {
-          description: "All 32 sheets and 960 icons have been loaded into the workspace.",
-        });
-      } else {
-        toast.error("Failed to restore yesterday's project.");
-      }
-    } catch (err) {
-      toast.error("Restoration failed: " + String(err));
-    } finally {
-      setRestoringYesterday(false);
-    }
-  }, [restoreYesterdayProject]);
 
   /* Template Builder session continuity: a refresh re-opens the builder
    * if it was open (the drafts themselves live in IndexedDB; this flag
@@ -930,37 +908,6 @@ export function StudioApp() {
     >
     <div className="h-screen flex flex-col bg-background text-foreground overflow-hidden">
       <Header onExport={openExport} onHelp={openHelp} onCheckUpdate={triggerUpdateCheck} onToggleLeft={() => setLeftOpen(true)} onToggleRight={() => setRightOpen(true)} onOpenPalette={openPalette} onOpenBuilder={openBuilder} onOpenLibrary={() => setLibraryOpen(true)} />
-
-      {/* Yesterday's session recovery banner — surfaces when previous day's work was safely saved */}
-      {hasYesterdayRecovery && !dismissYesterdayBanner && sheets.length < 32 && (
-        <div className="bg-amber-500/10 border-b border-amber-500/25 px-4 py-1.5 flex items-center justify-between gap-4 text-xs z-20 shrink-0">
-          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-medium">
-            <Sparkles className="h-4 w-4 shrink-0 animate-pulse text-amber-500" />
-            <span>
-              Yesterday's session (32 sheets, 960 icons, categories &amp; custom templates) was recovered!
-            </span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="sm"
-              variant="default"
-              className="h-6 text-[11px] px-3 bg-amber-600 hover:bg-amber-500 text-white font-medium"
-              onClick={handleRestoreYesterday}
-              disabled={restoringYesterday}
-            >
-              {restoringYesterday ? "Restoring…" : "Restore Yesterday's Work (32 Sheets)"}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-6 text-[11px] px-2 text-muted-foreground hover:text-foreground"
-              onClick={() => setDismissYesterdayBanner(true)}
-            >
-              Dismiss
-            </Button>
-          </div>
-        </div>
-      )}
 
       <div className="flex-1 flex min-h-0">
         {/* left sidebar — desktop. Responsive widths by viewport class:

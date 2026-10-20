@@ -484,9 +484,22 @@ function embedIcon(
 }
 
 function shadowFilter(id: string, blur: number, dx: number, dy: number, strength: number, color: string): string {
+  const stdDev = round(Math.max(blur / 2, 0), 2);
+  const safeDx = round(dx || 0, 2);
+  const safeDy = round(dy || 0, 2);
+  const safeOpacity = round(Math.max(0, Math.min(strength, 1)), 3);
+  const safeColor = color || "#000000";
+
   return (
-    `<filter id="${id}" x="-40%" y="-40%" width="180%" height="180%">` +
-    `<feDropShadow dx="${dx}" dy="${dy}" stdDeviation="${blur / 2}" flood-color="${color}" flood-opacity="${strength}"/>` +
+    `<filter id="${id}" x="-60%" y="-60%" width="220%" height="220%" color-interpolation-filters="sRGB">` +
+    `<feGaussianBlur in="SourceAlpha" stdDeviation="${stdDev}" result="blur"/>` +
+    `<feOffset in="blur" dx="${safeDx}" dy="${safeDy}" result="offset"/>` +
+    `<feFlood flood-color="${safeColor}" flood-opacity="${safeOpacity}" result="flood"/>` +
+    `<feComposite in="flood" in2="offset" operator="in" result="shadow"/>` +
+    `<feMerge>` +
+    `<feMergeNode in="shadow"/>` +
+    `<feMergeNode in="SourceGraphic"/>` +
+    `</feMerge>` +
     `</filter>`
   );
 }
@@ -538,6 +551,7 @@ function renderCustomSheet(
         .join("")
     : "";
   const parts: string[] = [`<g id="TemplateArtwork"${artworkRootAttrs}>${artwork}</g>`];
+  const defs: string[] = [];
 
   /* -- hero icon + optional hero card (v3) ----------------------------
    * P5: the ONE shared fitting engine (hero-fit.ts) drives placement —
@@ -563,8 +577,8 @@ function renderCustomSheet(
     if (useCard && hero.card.visible && cardSize > 0) {
       let filterAttr = "";
       if (hero.shadow) {
-        parts.push(
-          `<defs>${shadowFilter(`${rid}-heroShadow`, hero.shadowBlur, hero.shadowX, hero.shadowY, hero.shadowStrength, hero.shadowColor)}</defs>`
+        defs.push(
+          shadowFilter(`${rid}-heroShadow`, hero.shadowBlur, hero.shadowX, hero.shadowY, hero.shadowStrength, hero.shadowColor)
         );
         filterAttr = ` filter="url(#${rid}-heroShadow)"`;
       }
@@ -660,8 +674,10 @@ function renderCustomSheet(
     if (overlays.length) parts.push(`<g id="PreviewOverlays">${overlays.join("")}</g>`);
   }
 
+  const defsXml = defs.length ? `<defs>${defs.join("")}</defs>` : "";
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="${escapeXml(custom.viewBox)}" shape-rendering="geometricPrecision">` +
+    defsXml +
     parts.join("") +
     `</svg>`
   );

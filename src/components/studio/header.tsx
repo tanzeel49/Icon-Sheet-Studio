@@ -47,7 +47,6 @@ function SaveIndicator() {
   const setStorageHealthOpen = useStudio((s) => s.setStorageHealthOpen);
   const setRecoveryDialogOpen = useStudio((s) => s.setRecoveryDialogOpen);
   const saveProjectNow = useStudio((s) => s.saveProjectNow);
-  const hasYesterdayRecovery = useStudio((s) => s.hasYesterdayRecovery);
 
   const label =
     saveStatus === "saving"
@@ -96,9 +95,6 @@ function SaveIndicator() {
     >
       <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
       <span>{label}</span>
-      {hasYesterdayRecovery && (
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" title="Yesterday's recovered work available" />
-      )}
     </button>
   );
 }
