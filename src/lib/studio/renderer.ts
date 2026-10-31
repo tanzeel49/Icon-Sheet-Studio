@@ -483,25 +483,56 @@ function embedIcon(
   return `<g${rootAttrs} transform="translate(${round(tx)} ${round(ty)}) scale(${round(scale, 4)})">${content}</g>`;
 }
 
-function shadowFilter(id: string, blur: number, dx: number, dy: number, strength: number, color: string): string {
-  const stdDev = round(Math.max(blur / 2, 0), 2);
-  const safeDx = round(dx || 0, 2);
-  const safeDy = round(dy || 0, 2);
-  const safeOpacity = round(Math.max(0, Math.min(strength, 1)), 3);
+/**
+ * Adobe Illustrator and standard vector-safe drop shadow generator.
+ * Illustrator's native SVG importer discards and strips all SVG `<filter>` tags.
+ * To ensure drop shadows appear in Illustrator, Figma, browsers, and all vector tools,
+ * we generate clean, concentric vector rounded rectangles with smooth opacity falloff.
+ */
+function renderCardVectorShadow(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+  dx: number,
+  dy: number,
+  blur: number,
+  strength: number,
+  color: string,
+  groupId?: string
+): string {
+  const safeStrength = Math.max(0, Math.min(strength, 1));
+  if (safeStrength <= 0) return "";
   const safeColor = color || "#000000";
+  const groupAttr = groupId ? ` id="${groupId}"` : ` class="card-shadow"`;
 
-  return (
-    `<filter id="${id}" x="-60%" y="-60%" width="220%" height="220%" color-interpolation-filters="sRGB">` +
-    `<feGaussianBlur in="SourceAlpha" stdDeviation="${stdDev}" result="blur"/>` +
-    `<feOffset in="blur" dx="${safeDx}" dy="${safeDy}" result="offset"/>` +
-    `<feFlood flood-color="${safeColor}" flood-opacity="${safeOpacity}" result="flood"/>` +
-    `<feComposite in="flood" in2="offset" operator="in" result="shadow"/>` +
-    `<feMerge>` +
-    `<feMergeNode in="shadow"/>` +
-    `<feMergeNode in="SourceGraphic"/>` +
-    `</feMerge>` +
-    `</filter>`
-  );
+  if (blur <= 0) {
+    const sr = r > 0 ? round(Math.min(r, w / 2, h / 2)) : 0;
+    return `<g${groupAttr}><rect x="${round(x + dx)}" y="${round(y + dy)}" width="${round(w)}" height="${round(h)}" rx="${sr}" fill="${safeColor}" fill-opacity="${round(safeStrength, 3)}"/></g>`;
+  }
+
+  const steps = 8;
+  const weights = [0.035, 0.0686, 0.0996, 0.1268, 0.1491, 0.1657, 0.1759, 0.1793];
+  const rects: string[] = [];
+
+  for (let i = 0; i < steps; i++) {
+    const spread = ((steps - i) / steps) * blur;
+    const stepOpacity = round(Math.min(1, safeStrength * weights[i]), 4);
+    if (stepOpacity <= 0) continue;
+
+    const sx = round(x + dx - spread);
+    const sy = round(y + dy - spread);
+    const sw = round(w + spread * 2);
+    const sh = round(h + spread * 2);
+    const sr = r > 0 ? round(Math.min(r + spread, sw / 2, sh / 2)) : 0;
+
+    rects.push(
+      `<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="${sr}" fill="${safeColor}" fill-opacity="${stepOpacity}"/>`
+    );
+  }
+
+  return `<g${groupAttr}>${rects.join("")}</g>`;
 }
 
 function round(n: number, digits = 2): number {
@@ -575,15 +606,27 @@ function renderCustomSheet(
     const cardCx = heroSlot.x + heroSlot.width / 2 + hero.cardOffsetX;
     const cardCy = heroSlot.y + heroSlot.height / 2 + hero.cardOffsetY;
     if (useCard && hero.card.visible && cardSize > 0) {
-      let filterAttr = "";
+      const heroCardX = cardCx - cardSize / 2;
+      const heroCardY = cardCy - cardSize / 2;
       if (hero.shadow) {
-        defs.push(
-          shadowFilter(`${rid}-heroShadow`, hero.shadowBlur, hero.shadowX, hero.shadowY, hero.shadowStrength, hero.shadowColor)
+        parts.push(
+          renderCardVectorShadow(
+            heroCardX,
+            heroCardY,
+            cardSize,
+            cardSize,
+            hero.card.radius,
+            hero.shadowX,
+            hero.shadowY,
+            hero.shadowBlur,
+            hero.shadowStrength,
+            hero.shadowColor,
+            "HeroCardShadow"
+          )
         );
-        filterAttr = ` filter="url(#${rid}-heroShadow)"`;
       }
       parts.push(
-        `<g id="HeroCard"><rect x="${round(cardCx - cardSize / 2)}" y="${round(cardCy - cardSize / 2)}" width="${round(cardSize)}" height="${round(cardSize)}" rx="${hero.card.radius}" fill="${hero.card.color}" fill-opacity="${hero.card.opacity}"${hero.card.borderWidth > 0 ? ` stroke="${hero.card.borderColor}" stroke-width="${hero.card.borderWidth}"` : ""}${filterAttr}/></g>`
+        `<g id="HeroCard"><rect x="${round(heroCardX)}" y="${round(heroCardY)}" width="${round(cardSize)}" height="${round(cardSize)}" rx="${hero.card.radius}" fill="${hero.card.color}" fill-opacity="${hero.card.opacity}"${hero.card.borderWidth > 0 ? ` stroke="${hero.card.borderColor}" stroke-width="${hero.card.borderWidth}"` : ""}/></g>`
       );
     }
     /* P5 fitting flow: card/slot bounds → usable area (− iconPadding) →
@@ -786,15 +829,25 @@ export function renderSheet(
   const heroParts: string[] = [];
   if (heroEnabled(hero)) {
     if (hero.card.visible) {
-      let filterAttr = "";
       if (hero.shadow) {
-        defs.push(
-          shadowFilter(`${rid}-heroShadow`, hero.shadowBlur, hero.shadowX, hero.shadowY, hero.shadowStrength, hero.shadowColor)
+        heroParts.push(
+          renderCardVectorShadow(
+            heroCardX,
+            heroCardY,
+            heroCardSize,
+            heroCardSize,
+            hero.card.radius,
+            hero.shadowX,
+            hero.shadowY,
+            hero.shadowBlur,
+            hero.shadowStrength,
+            hero.shadowColor,
+            "HeroCardShadow"
+          )
         );
-        filterAttr = ` filter="url(#${rid}-heroShadow)"`;
       }
       heroParts.push(
-        `<rect x="${round(heroCardX)}" y="${round(heroCardY)}" width="${round(heroCardSize)}" height="${round(heroCardSize)}" rx="${hero.card.radius}" fill="${hero.card.color}" fill-opacity="${hero.card.opacity}"${hero.card.borderWidth > 0 ? ` stroke="${hero.card.borderColor}" stroke-width="${hero.card.borderWidth}"` : ""}${filterAttr}/>`
+        `<rect x="${round(heroCardX)}" y="${round(heroCardY)}" width="${round(heroCardSize)}" height="${round(heroCardSize)}" rx="${hero.card.radius}" fill="${hero.card.color}" fill-opacity="${hero.card.opacity}"${hero.card.borderWidth > 0 ? ` stroke="${hero.card.borderColor}" stroke-width="${hero.card.borderWidth}"` : ""}/>`
       );
     }
     if (heroIcon) {
@@ -881,11 +934,6 @@ export function renderSheet(
   const card = design.card;
   const gridParts: string[] = [];
 
-  if (card.shadow) {
-    defs.push(
-      shadowFilter(`${rid}-cardShadow`, card.shadowBlur, card.shadowX, card.shadowY, card.shadowStrength, card.shadowColor)
-    );
-  }
 
   /* showEmptyCells → draw the full template frame (the default-sheet look);
    * otherwise cards render only where icons live. */
@@ -936,8 +984,24 @@ export function renderSheet(
       } else {
         fill = card.color;
       }
+      if (card.shadow) {
+        parts.push(
+          renderCardVectorShadow(
+            cardX,
+            cardY,
+            cardSize,
+            cardSize,
+            card.radius,
+            card.shadowX,
+            card.shadowY,
+            card.shadowBlur,
+            card.shadowStrength,
+            card.shadowColor
+          )
+        );
+      }
       parts.push(
-        `<rect x="${round(cardX)}" y="${round(cardY)}" width="${round(cardSize)}" height="${round(cardSize)}" rx="${card.radius}" fill="${fill}" fill-opacity="${card.opacity}"${card.borderWidth > 0 ? ` stroke="${card.borderColor}" stroke-width="${card.borderWidth}"` : ""}${card.shadow ? ` filter="url(#${rid}-cardShadow)"` : ""}/>`
+        `<rect x="${round(cardX)}" y="${round(cardY)}" width="${round(cardSize)}" height="${round(cardSize)}" rx="${card.radius}" fill="${fill}" fill-opacity="${card.opacity}"${card.borderWidth > 0 ? ` stroke="${card.borderColor}" stroke-width="${card.borderWidth}"` : ""}/>`
       );
     }
     if (icon) {
